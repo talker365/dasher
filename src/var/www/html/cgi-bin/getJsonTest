@@ -1,0 +1,110 @@
+#!/bin/bash
+# Filename:  getJson
+# Created:   28-FEB-2020
+# Author:    N4LDR & WD4VA
+#
+# Description:  This BASH script will return data from various sources in a specified JSON format.
+#
+# Parameters:  -f [ | --feed ] feedname - desired data feed (REQUIRED)
+#              -n [ | --number ] number - number of record to return (0 = ALL)
+#              format - output format (OPTIONAL - default JSON)
+#              flatten - [true/false] makes data flat for Mango (OPTIONAL - default false)
+#              --sensor_model model - model name for Mango (OPTIONAL)
+#              --sensor_id - id for Mango (OPTIONAL)
+#              --sensor_channel - channel for Mango (OPTIONAL)
+#              records - number of records to return (OPTIONAL - 0 = ALL)
+#              condense - [true/false] reduces returned data to one row, using the most recent values (OPTIONAL)
+#
+
+feed=
+numRecords=-1
+sensor_model=
+sensor_id=
+sensor_channel=
+
+while [ "$1" != "" ]; do
+    case $1 in
+        -f | --feed )           shift
+                                feed=$1
+                                ;;
+        -n | --number )    		shift
+								numRecords=$1
+                                ;;
+        --sensor_model )    	shift
+								sensor_model=$1
+                                ;;
+        --sensor_id )    		shift
+								sensor_id=$1
+                                ;;
+        --sensor_channel )    	shift
+								sensor_channel=$1
+                                ;;
+        -h | --help )           usage
+                                exit
+                                ;;
+        * )                     usage
+                                exit 1
+    esac
+    shift
+done
+
+
+case $feed in
+	aprs)
+		cd /var/log/pypacket
+		echo -e '{"records":['
+		if [ $numRecords -lt 1 ]; then
+			tac `ls -t /var/log/pypacket | head -n1` | grep JSON | grep -v "An exception occurred" | awk 'BEGIN {ORS=","} {$1=$2=$3=$4=""; print $0}'
+		else
+			tac `ls -t /var/log/pypacket | head -n1` | grep JSON | grep -v "An exception occurred" | head -$numRecords - | awk 'BEGIN {ORS=","} {$1=$2=$3=$4=""; print $0}'
+		fi
+		echo -e ']}\n'
+		;;
+	outnet)
+		cd /tmp/othernet
+		echo -e '{"records":['
+		if [ $numRecords -lt 1 ]; then
+			ls -t /tmp/othernet | head -n100 | while read line; do python3 /var/www/html/bin/parseOutnetAPRS.py $line ; done
+		else
+			ls -t /tmp/othernet | head -n$numRecords | while read line; do python3 /var/www/html/bin/parseOutnetAPRS.py $line ; done
+		fi
+		echo -e ']}\n'
+		;;
+	433)
+		cd /var/log/433test
+		echo -e '{"records":['
+		if [ $numRecords -lt 1 ]; then
+			tac `ls -t /var/log/433test | head -n1` | head -1000 - | awk 'BEGIN {ORS=","} {print $0}'
+		else
+			tac `ls -t /var/log/433test | head -n1` | head -$numRecords - | awk 'BEGIN {ORS=","} {print $0}'
+		fi
+		echo -e ']}\n'
+		;;
+	mango_433)
+		cd /var/log/433test
+		tac `ls -t /var/log/433test | head -n1` | grep "\"model\" : \"$sensor_model\"" | grep "\"id\" : $sensor_id" | grep "\"channel\" : $sensor_channel" | head -1 - | awk '{print $0}'
+		;;
+esac
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
