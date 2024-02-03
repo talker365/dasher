@@ -1,2 +1,2 @@
 #!/bin/bash
-rsync -a /Volumes/sigmon/var/www/html/ src/var/www/html
+rsync -a --info=progress2 /Volumes/sigmon/var/www/html/ src/var/www/html
