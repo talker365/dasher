@@ -6,11 +6,15 @@
     width:      50px;
   }
 </style>
-<div class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:300px;" id="mySidebar"><br>
-  <div class="w3-container w3-row">
+<div class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:300px;padding-top: 0px; margin-top: 0px;" id="mySidebar">
+  <div class="w3-container w3-row" style="font-family: 'Nasalization', sans-serif; font-size: 7ch; background-color: #DEE8EF; color: #F70608; letter-spacing: -0.15ch; padding-top: 0px; margin-top: 0px; padding-bottom: 0px; margin-bottom: 0px; text-shadow: 1px 1px; top: -0.6ch; position: relative;">
+    <!--<img src="images/dasher_logo.png" class="w3-margin-right" style="width:90%">-->
+      DASHER
+  </div>
+  <div class="w3-container w3-row" style="top: -0.6ch; position: relative;">
     <div class="w3-col s4">
       <!--<img src="/images/avatar.png" class="w3-circle w3-margin-right" style="width:46px">-->
-      <img src="images/micro_sdr.svg" class="w3-margin-right" style="width:90%">
+      <!--<img src="images/micro_sdr.svg" class="w3-margin-right" style="width:90%">-->
     </div>
     <div class="w3-col s8 w3-bar">
       <span><?php echo shell_exec("get_boardname"); ?></span><br>
