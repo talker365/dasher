@@ -1,7 +1,7 @@
 [
     {
         "name": "ADS-B",
-        "installer": "",
+        "installer": "adsb.sh",
         "version_installed": "",
         "version_available": "",
         "installed": "false",
@@ -11,7 +11,7 @@
     },
     {
         "name": "APRS",
-        "installer": "",
+        "installer": "aprs.sh",
         "version_installed": "",
         "version_available": "",
         "installed": "false",
@@ -21,7 +21,7 @@
     },
     {
         "name": "ATCS",
-        "installer": "",
+        "installer": "atcs.sh",
         "version_installed": "",
         "version_available": "",
         "installed": "false",
@@ -31,7 +31,7 @@
     },
     {
         "name": "DreamCatcher",
-        "installer": "",
+        "installer": "dreamcatcher.sh",
         "version_installed": "",
         "version_available": "",
         "installed": "false",
@@ -41,7 +41,7 @@
     },
     {
         "name": "Echolink",
-        "installer": "",
+        "installer": "echolink.sh",
         "version_installed": "",
         "version_available": "",
         "installed": "false",
@@ -51,7 +51,7 @@
     },
     {
         "name": "GOES",
-        "installer": "",
+        "installer": "goes.sh",
         "version_installed": "",
         "version_available": "",
         "installed": "false",
@@ -61,7 +61,7 @@
     },
     {
         "name": "GPS",
-        "installer": "",
+        "installer": "gps.sh",
         "version_installed": "",
         "version_available": "",
         "installed": "false",
@@ -71,7 +71,7 @@
     },
     {
         "name": "NOAA",
-        "installer": "",
+        "installer": "noaa.sh",
         "version_installed": "",
         "version_available": "",
         "installed": "false",
@@ -81,7 +81,7 @@
     },
     {
         "name": "Packet",
-        "installer": "",
+        "installer": "packet.sh",
         "version_installed": "",
         "version_available": "",
         "installed": "false",
@@ -91,7 +91,7 @@
     },
     {
         "name": "Sat Tracker",
-        "installer": "",
+        "installer": "sattracker.sh",
         "version_installed": "",
         "version_available": "",
         "installed": "false",
@@ -101,7 +101,7 @@
     },
     {
         "name": "Weather",
-        "installer": "",
+        "installer": "weather.sh",
         "version_installed": "",
         "version_available": "",
         "installed": "false",
@@ -111,7 +111,7 @@
     },
     {
         "name": "TPMS",
-        "installer": "",
+        "installer": "tpms.sh",
         "version_installed": "",
         "version_available": "",
         "installed": "false",
