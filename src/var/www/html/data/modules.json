@@ -1,0 +1,122 @@
+[
+    {
+        "name": "ADS-B",
+        "installer": "",
+        "version_installed": "",
+        "version_available": "",
+        "installed": "false",
+        "active": "false",
+        "description": "",
+        "order": 1
+    },
+    {
+        "name": "APRS",
+        "installer": "",
+        "version_installed": "",
+        "version_available": "",
+        "installed": "false",
+        "active": "false",
+        "description": "",
+        "order": 2
+    },
+    {
+        "name": "ATCS",
+        "installer": "",
+        "version_installed": "",
+        "version_available": "",
+        "installed": "false",
+        "active": "false",
+        "description": "",
+        "order": 3
+    },
+    {
+        "name": "DreamCatcher",
+        "installer": "",
+        "version_installed": "",
+        "version_available": "",
+        "installed": "false",
+        "active": "false",
+        "description": "",
+        "order": 4
+    },
+    {
+        "name": "Echolink",
+        "installer": "",
+        "version_installed": "",
+        "version_available": "",
+        "installed": "false",
+        "active": "false",
+        "description": "",
+        "order": 5
+    },
+    {
+        "name": "GOES",
+        "installer": "",
+        "version_installed": "",
+        "version_available": "",
+        "installed": "false",
+        "active": "false",
+        "description": "",
+        "order": 6
+    },
+    {
+        "name": "GPS",
+        "installer": "",
+        "version_installed": "",
+        "version_available": "",
+        "installed": "false",
+        "active": "false",
+        "description": "",
+        "order": 7
+    },
+    {
+        "name": "NOAA",
+        "installer": "",
+        "version_installed": "",
+        "version_available": "",
+        "installed": "false",
+        "active": "false",
+        "description": "",
+        "order": 8
+    },
+    {
+        "name": "Packet",
+        "installer": "",
+        "version_installed": "",
+        "version_available": "",
+        "installed": "false",
+        "active": "false",
+        "description": "",
+        "order": 9
+    },
+    {
+        "name": "Sat Tracker",
+        "installer": "",
+        "version_installed": "",
+        "version_available": "",
+        "installed": "false",
+        "active": "false",
+        "description": "",
+        "order": 10
+    },
+    {
+        "name": "Weather",
+        "installer": "",
+        "version_installed": "",
+        "version_available": "",
+        "installed": "false",
+        "active": "false",
+        "description": "",
+        "order": 11
+    },
+    {
+        "name": "TPMS",
+        "installer": "",
+        "version_installed": "",
+        "version_available": "",
+        "installed": "false",
+        "active": "false",
+        "description": "",
+       "order": 12
+    }
+]

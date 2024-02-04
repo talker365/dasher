@@ -119,18 +119,23 @@
 
 
 
-            var myObj = JSON.parse(s);
+            try {
+              var myObj = JSON.parse(s);
 
-            switch (strDataset) {
-              case "dasher":
-                arrDasher = myObj.records[0];
-                //console.log("getJSON(\"" + strDataset + "\"): arrAPRS = arrCurrentAPRS;");
-                break;
+              switch (strDataset) {
+                case "dasher":
+                  arrDasher = myObj.records[0];
+                  //console.log("getJSON(\"" + strDataset + "\"): arrAPRS = arrCurrentAPRS;");
+                  break;
+              }
+
+              // Update UI...
+              updateUI(strDataset);
+              //console.log("getJSON(\"" + strDataset + "\"): updateUI(strDataset);");
             }
-
-            // Update UI...
-            updateUI(strDataset);
-            //console.log("getJSON(\"" + strDataset + "\"): updateUI(strDataset);");
+            catch (err) {
+              console.log(err);
+            }
 
             break;
         }
@@ -300,6 +305,7 @@
   <div class="w3-bar w3-border-top"> <!-- Tab Navigation -->
     <button id="Dashboard_nav" class="w3-bar-item w3-button tab-button w3-border-bottom w3-border-black w3-light-blue" style="padding-bottom: 0px;" onclick="openDasherTab(event, 'Dashboard_tab', this)"><b><i class="fa fa-dashboard"></i> Dashboard </b></button>
     <button id="Settings_nav" class="w3-bar-item w3-button tab-button w3-border-bottom w3-border-black" style="padding-bottom: 0px;" onclick="openDasherTab(event, 'Settings_tab', this)"><i class="fa fa-wrench"></i> Settings </button>
+    <button id="Settings_nav" class="w3-bar-item w3-button tab-button w3-border-bottom w3-border-black" style="padding-bottom: 0px;" onclick="openDasherTab(event, 'Modules_tab', this)"><i class="fa fa-wrench"></i> Modules </button>
     <button id="Webmin_nav" class="w3-bar-item w3-button tab-button w3-border-bottom w3-border-black" style="padding-bottom: 0px;" onclick="openDasherTab(event, 'Webmin_tab', this)"><i class="fa fa-gear"></i> Webmin </button>
   </div>
 
@@ -404,6 +410,18 @@
     </div>
   </div>
 </div>
+
+
+<div id="Modules_tab" class="w3-cell-row dasherTab" style="display: none;"> <!-- Settings Tab -->
+  <div class="w3-border w3-border-gray w3-margin w3-padding-16">
+    <h2> Modules </h2>
+  </div>
+
+
+
+
+</div>
+
 
 <div id="Settings_tab" class="w3-cell-row dasherTab" style="display: none;"> <!-- Settings Tab -->
   <form action="index.php" method="post">
