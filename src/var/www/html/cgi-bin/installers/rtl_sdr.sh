@@ -4,13 +4,13 @@ start=$(date +'%s')
 
 # Default installation destination
 INSTALL_DIR="/opt/"
+MODULE_NAME="rtl-sdr"
 
 # Function to display usage information
 usage() {
   echo "Usage: $0 [OPTIONS]"
-  echo "  -u, --uninstall       Uninstall rtl-sdr and its dependents"
+  echo "  -u, --uninstall       Uninstall "$MODULE_NAME" and its dependents"
   echo "  -h, --help            Display this help message"
-  echo "  -d, --destination     Installation destination directory (default: /opt/)"
   exit 1
 }
 
@@ -23,10 +23,6 @@ while [[ "$#" -gt 0 ]]; do
     -h|--help)
       usage
       ;;
-    -d|--destination)
-      shift
-      INSTALL_DIR="$1"
-      ;;
     *)
       echo "Invalid option: $1"
       usage
@@ -35,8 +31,8 @@ while [[ "$#" -gt 0 ]]; do
   shift
 done
 
-# Function to uninstall rtl-sdr and its dependents
-uninstall_rtlsdr() {
+# Function to uninstall rtl_433 and its dependents
+uninstall_rtl433() {
   sudo apt remove -y rtl-sdr
   sudo apt autoremove -y
   sudo rm /etc/modprobe.d/blacklist-rtlsdr.conf
@@ -301,5 +297,5 @@ update-initramfs -u
 cd ../..
 rm -rf rtl-sdr
 
-echo "RTL-SDR library and its dependents have been installed successfully."
+echo $MODULE_NAME "library and its dependents have been installed successfully."
 echo -e "\n\nScript Completed! in $(($(date +'%s') - $start)) seconds."
