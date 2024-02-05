@@ -1,0 +1,122 @@
+[
+    {
+        "name": "ADS-B",
+        "installer": "adsb.sh",
+        "version_installed": "",
+        "version_available": "",
+        "installed": "false",
+        "active": "false",
+        "description": "",
+        "order": 1
+    },
+    {
+        "name": "APRS",
+        "installer": "aprs.sh",
+        "version_installed": "",
+        "version_available": "",
+        "installed": "false",
+        "active": "false",
+        "description": "",
+        "order": 2
+    },
+    {
+        "name": "ATCS",
+        "installer": "atcs.sh",
+        "version_installed": "",
+        "version_available": "",
+        "installed": "false",
+        "active": "false",
+        "description": "",
+        "order": 3
+    },
+    {
+        "name": "DreamCatcher",
+        "installer": "dreamcatcher.sh",
+        "version_installed": "",
+        "version_available": "",
+        "installed": "false",
+        "active": "false",
+        "description": "",
+        "order": 4
+    },
+    {
+        "name": "Echolink",
+        "installer": "echolink.sh",
+        "version_installed": "",
+        "version_available": "",
+        "installed": "false",
+        "active": "false",
+        "description": "",
+        "order": 5
+    },
+    {
+        "name": "GOES",
+        "installer": "goes.sh",
+        "version_installed": "",
+        "version_available": "",
+        "installed": "false",
+        "active": "false",
+        "description": "",
+        "order": 6
+    },
+    {
+        "name": "GPS",
+        "installer": "gps.sh",
+        "version_installed": "",
+        "version_available": "",
+        "installed": "false",
+        "active": "false",
+        "description": "",
+        "order": 7
+    },
+    {
+        "name": "NOAA",
+        "installer": "noaa.sh",
+        "version_installed": "",
+        "version_available": "",
+        "installed": "false",
+        "active": "false",
+        "description": "",
+        "order": 8
+    },
+    {
+        "name": "Packet",
+        "installer": "packet.sh",
+        "version_installed": "",
+        "version_available": "",
+        "installed": "false",
+        "active": "false",
+        "description": "",
+        "order": 9
+    },
+    {
+        "name": "Sat Tracker",
+        "installer": "sattracker.sh",
+        "version_installed": "",
+        "version_available": "",
+        "installed": "false",
+        "active": "false",
+        "description": "",
+        "order": 10
+    },
+    {
+        "name": "Weather",
+        "installer": "weather.sh",
+        "version_installed": "",
+        "version_available": "",
+        "installed": "false",
+        "active": "false",
+        "description": "",
+        "order": 11
+    },
+    {
+        "name": "TPMS",
+        "installer": "tpms.sh",
+        "version_installed": "",
+        "version_available": "",
+        "installed": "false",
+        "active": "false",
+        "description": "",
+       "order": 12
+    }
+]

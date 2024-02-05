@@ -49,6 +49,8 @@
   var refreshRate = 60000;
   var arrDasher = [];
   var json_request = [];
+  var json_modules_master = [];
+  var json_modules_local = [];
 
   setInterval(function() {
     if (!json_request["dasher"]) {
@@ -57,6 +59,11 @@
       getJSON("dasher");
     }
   }, refreshRate);
+
+  function initialize() {
+    loadFile("modules_master.json");
+    loadFile("modules_local.json");
+  }
 
   function getJSON(strDataset) { /*  */
     var xhttp = new XMLHttpRequest();
@@ -157,7 +164,6 @@
   }
 
   function updateDasher() {
-
     // Storage...
     var strStorage = "";
     for (let i = 0; i < arrDasher.storage.length; i++) {
@@ -247,8 +253,6 @@
 
 
     resizeDashboardTiles();
-
-
   }
 
   function openTab(tabName, element) { /*  */
@@ -288,6 +292,146 @@
       document.getElementById("dashboard_tile_sdr").style.height = divHeight;
     }
   }
+
+  function loadFile(filename) {
+    var xhttp = new XMLHttpRequest();
+    var strUrl = "loadFile.php?filename=" + filename;
+    var strReturn = "";
+
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        try {
+          switch (filename) {
+            case "modules_master.json":
+              json_modules_master = JSON.parse(this.responseText);
+              break;
+            case "modules_local.json":
+              json_modules_local = JSON.parse(this.responseText);
+              document.getElementById("divModules").innerHTML = generateModules();
+              break;
+          }
+          console.log("loadFile(): filename = '" + filename + "' - Successful");
+        } catch (err) {
+          console.log("loadFile(): filename = '" + filename + "' - Failed");
+          console.log(err);
+        }
+      }
+    };
+
+    xhttp.open("GET", strUrl, true);
+    xhttp.send();   
+  }
+
+  function generateModules() {  /* Create Modules table Modules Tab */
+    var div = document.getElementById("divAllSats");
+    var tempArr = []; // Assigned below...
+    var tempArr = tempArr.concat(json_modules_local);
+
+    var strHtml = "";
+    var boolFirst = true;
+
+    while (tempArr.length > 0) {
+      var objModule = tempArr.shift();
+      if (boolFirst) {
+        boolFirst = false;
+      } else {
+        strHtml += "<br />"; 
+      }
+      strHtml += generateModuleRow(objModule);
+    }
+
+    return strHtml;
+  }
+  
+  function generateModuleRow(objModule) {
+
+
+
+    // Find a <table> element with id="myTable":
+    var table = document.getElementById("tblModules");
+
+    // Create an empty <tr> element and add it to the 1st position of the table:
+    var row = table.insertRow(-1);
+
+    // Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    var cell3 = row.insertCell(2);
+    var cell4 = row.insertCell(3);
+    var cell5 = row.insertCell(4);
+    var cell6 = row.insertCell(5);
+
+    // Add some text to the new cells:
+    if (objModule.order != undefined) cell1.innerHTML = objModule.order;
+    if (objModule.name != undefined) cell2.innerHTML = objModule.name;
+    if (objModule.version_installed != undefined) cell3.innerHTML = objModule.version_installed;
+    if (objModule.active != undefined) {
+      var html = "<span class=\"d_navSpan\"><i class=\"";
+      if (objModule.active == "true") {
+        html += "fa fa-toggle-on";
+      } else {
+        html += "fa fa-toggle-off";
+      }
+      html += "\"></i></span>";
+      cell4.innerHTML = html;
+    }
+    if (objModule.visible != undefined) {
+      var html = "<span class=\"d_navSpan\"><i class=\"";
+      if (objModule.visible == "true") {
+        html += "fa fa-toggle-on";
+      } else {
+        html += "fa fa-toggle-off";
+      }
+      html += "\"></i></span>";
+      cell5.innerHTML = html;
+    }
+    if (objModule.installed != undefined) {
+      var html = "<button class=\"w3-button w3-round-xlarge w3-teal\">";
+      if (objModule.installed == "true") {
+        html += "Uninstall";
+      } else {
+        html += "Install";
+      }
+      html += "</button>";
+      cell6.innerHTML = html;
+    }
+
+
+
+
+    var strReturn = "";
+    if (objModule.name != undefined) strReturn += "<span><b>Name:</b> " + objModule.name + "</span><br />";
+    if (objModule.installer != undefined) strReturn += "<span><b>Installer:</b> " + objModule.installer + "</span><br />";
+    if (objModule.version_installed != undefined) strReturn += "<span><b>Version Installed:</b> " + objModule.version_installed + "</span><br />";
+    if (objModule.version_available != undefined) strReturn += "<span><b>Version Available:</b> " + objModule.version_available + "</span><br />";
+    if (objModule.installed != undefined) strReturn += "<span><b>Installed:</b> " + objModule.installed + "</span><br />";
+    if (objModule.active != undefined) strReturn += "<span><b>Active:</b> " + objModule.active + "</span><br />";
+    if (objModule.description != undefined) strReturn += "<span><b>Description:</b> " + objModule.description + "</span><br />";
+    if (objModule.order != undefined) strReturn += "<span><b>Order:</b> " + objModule.order + "</span><br />";
+
+/*
+    if (transmitter.status != undefined) {
+    strReturn += "<span><b>Status:</b> " + transmitter.status + "</span><br />";
+    } else {
+    strReturn += "<span><b>Status:</b> ";
+    if (transmitter.status == "inactive") {
+      strReturn += "<span class=\"w3-red\">";
+    } else if (transmitter.status == "active") {
+      strReturn += "<span class=\"w3-green\">";
+    } else {
+      strReturn += "<span class=\"\">";
+    }
+    strReturn += "&nbsp;" + transmitter.status + "&nbsp;</span><br />";
+
+    }
+*/
+    return strReturn;
+  }
+
+
+
+
+
 </script>
 
 
@@ -304,8 +448,8 @@
 
   <div class="w3-bar w3-border-top"> <!-- Tab Navigation -->
     <button id="Dashboard_nav" class="w3-bar-item w3-button tab-button w3-border-bottom w3-border-black w3-light-blue" style="padding-bottom: 0px;" onclick="openDasherTab(event, 'Dashboard_tab', this)"><b><i class="fa fa-dashboard"></i> Dashboard </b></button>
-    <button id="Settings_nav" class="w3-bar-item w3-button tab-button w3-border-bottom w3-border-black" style="padding-bottom: 0px;" onclick="openDasherTab(event, 'Settings_tab', this)"><i class="fa fa-wrench"></i> Settings </button>
     <button id="Settings_nav" class="w3-bar-item w3-button tab-button w3-border-bottom w3-border-black" style="padding-bottom: 0px;" onclick="openDasherTab(event, 'Modules_tab', this)"><i class="fa fa-wrench"></i> Modules </button>
+    <button id="Settings_nav" class="w3-bar-item w3-button tab-button w3-border-bottom w3-border-black" style="padding-bottom: 0px;" onclick="openDasherTab(event, 'Settings_tab', this)"><i class="fa fa-wrench"></i> Settings </button>
     <button id="Webmin_nav" class="w3-bar-item w3-button tab-button w3-border-bottom w3-border-black" style="padding-bottom: 0px;" onclick="openDasherTab(event, 'Webmin_tab', this)"><i class="fa fa-gear"></i> Webmin </button>
   </div>
 
@@ -412,15 +556,49 @@
 </div>
 
 
+
+
+
+
+
 <div id="Modules_tab" class="w3-cell-row dasherTab" style="display: none;"> <!-- Settings Tab -->
   <div class="w3-border w3-border-gray w3-margin w3-padding-16">
     <h2> Modules </h2>
+
+    <table id="tblModules">
+      <tr>
+        <th> Order </th>
+        <th> Name </th>
+        <th> Version </th>
+        <th> Active </th>
+        <th> Visible </th>
+        <th> Manage </th>
+      </tr>
+    </table>
   </div>
 
 
 
 
+  <div id="divModules">
+  </div>
+
+
+
+
+
 </div>
+
+
+
+
+
+
+
+
+
+
+
 
 
 <div id="Settings_tab" class="w3-cell-row dasherTab" style="display: none;"> <!-- Settings Tab -->
@@ -514,7 +692,10 @@
 
   json_request["dasher"] = true;
   getJSON("dasher");
+</script>
 
+<script type="text/javascript">
+  initialize();
 </script>
 
 </body>
