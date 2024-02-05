@@ -1,15 +1,12 @@
 #!/bin/bash
 
-start=$(date +'%s')
-
 # Default installation destination
 INSTALL_DIR="/opt/"
-MODULE_NAME="rtl-sdr"
 
 # Function to display usage information
 usage() {
   echo "Usage: $0 [OPTIONS]"
-  echo "  -u, --uninstall       Uninstall "$MODULE_NAME" and its dependents"
+  echo "  -u, --uninstall       Uninstall RTL-SDR and its dependents"
   echo "  -h, --help            Display this help message"
   exit 1
 }
@@ -31,6 +28,16 @@ while [[ "$#" -gt 0 ]]; do
   shift
 done
 
+# Function to check if a command is installed
+check_command() {
+  if ! command -v "$1" &> /dev/null; then
+    if [ "$1" == "wget"    ]; then sudo apt install -y wget; fi
+    if [ "$1" == "git"     ]; then sudo apt install -y git; fi
+    if [ "$1" == "figlet". ]; then sudo apt install -y figlet; fi
+    exit 1
+  fi
+}
+
 # Function to uninstall rtl-sdr and its dependents
 uninstall_rtlsdr() {
   sudo apt remove -y rtl-sdr
@@ -41,7 +48,6 @@ uninstall_rtlsdr() {
   sudo rm -rf "$INSTALL_DIR"/include/rtl-sdr*
   sudo rm -rf "$INSTALL_DIR"/lib/librtlsdr*
   echo "RTL-SDR and its dependents have been uninstalled."
-  echo -e "\n\nScript Completed! in $(($(date +'%s') - $start)) seconds."
 }
 
 # If uninstall flag is set, execute uninstall function
@@ -49,6 +55,10 @@ if [ "$uninstall" = true ]; then
   uninstall_rtlsdr
   exit 0
 fi
+
+# Check if required commands are installed
+check_command "git"
+check_command "figlet"
 
 # Otherwise, install rtl-sdr and its dependents
 
@@ -59,6 +69,7 @@ sudo apt update
 sudo apt install -y git cmake build-essential libusb-1.0-0-dev
 
 # Clone RTL-SDR repository
+cd "$INSTALL_DIR"
 #git clone https://github.com/osmocom/rtl-sdr.git
 git clone https://github.com/talker365/rtl-sdr.git
 cd rtl-sdr
@@ -70,9 +81,6 @@ cmake ../ -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR"
 make
 sudo make install
 sudo ldconfig
-
-# Install RTL-SDR utilities
-sudo apt install -y rtl-sdr
 
 # Installing the rtl-sdr.rules...
 echo -e '\nCreating the rtl-sdr rules file...'
@@ -123,5 +131,4 @@ update-initramfs -u
 cd ../..
 rm -rf rtl-sdr
 
-echo $MODULE_NAME "library and its dependents have been installed successfully."
-echo -e "\n\nScript Completed! in $(($(date +'%s') - $start)) seconds."
+echo 'RTL-SDRlibrary and its dependents have been installed successfully.'

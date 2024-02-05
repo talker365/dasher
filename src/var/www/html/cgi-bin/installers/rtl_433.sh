@@ -1,10 +1,7 @@
 #!/bin/bash
 
-start=$(date +'%s')
-
 # Default installation destination
 INSTALL_DIR="/opt/"
-MODULE_NAME="rtl_433"
 DEVICE_NUM="0"
 SERIAL_NUM="00000433"
 
@@ -12,7 +9,7 @@ SERIAL_NUM="00000433"
 usage() {
   echo "Usage: $0 [OPTIONS]"
   echo "  -h, --help            Display this help message"
-  echo "  -u, --uninstall       Uninstall "$MODULE_NAME " and its dependents"
+  echo "  -u, --uninstall       Uninstall rtl_433 and its dependents"
   echo "  -d, --device          SDR Device # "
   echo "  -s, --serial.         SDR Serial # "
   exit 1
@@ -52,8 +49,7 @@ uninstall_rtl433() {
   sudo rm -rf "/etc/systemd/system/rtl_433-wx.service"
   sudo rm -rf "$INSTALL_DIR"/bin/rtl_433
   sudo rm -rf "$INSTALL_DIR"/share/rtl_433
-  echo $MODULE_NAME" and its dependents have been uninstalled."
-  echo -e "\n\nScript Completed! in $(($(date +'%s') - $start)) seconds."
+  echo -e 'rtl_433 and its dependents have been uninstalled.'
 }
 
 # If uninstall flag is set, execute uninstall function
@@ -111,7 +107,3 @@ systemctl start rtl_433-wx.service
 # Clean up
 cd ../..
 rm -rf rtl_433
-
-
-echo "$MODULE_NAME" and its dependents have been installed successfully."
-echo -e "\n\n"$MODULE_NAME" Installation Completed! in $(($(date +'%s') - $start)) seconds."

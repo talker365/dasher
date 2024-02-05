@@ -1,7 +1,5 @@
 #!/bin/bash
 
-start=$(date +'%s')
-
 # Default installation destination
 INSTALL_DIR="/opt"
 SERIAL_NUMBER="00000433"
@@ -42,8 +40,7 @@ check_command() {
     if [ "$1" == "pip3"    ]; then sudo apt install -y python3-pip; fi
     if [ "$1" == "git"     ]; then sudo apt install -y git; fi
     if [ "$1" == "figlet". ]; then sudo apt install -y figlet; fi
-    if [ "$1" == "rtl_433" ]; then echo -e 'Install rtl_433 first'; fi
-    exit 1
+    if [ "$1" == "rtl_433" ]; then ./rtl_433.sh; fi
   fi
 }
 
@@ -56,7 +53,6 @@ uninstall_pypacket() {
    sudo sed -i '/# Setting this to allow multiple SDRs to work better/d' /etc/rc.local
    sudo sed -i '/\/sys\/module\/usbcore\/parameters\/usbfs_memory_mb/d' /etc/rc.local
   echo "NOAA and its dependents have been uninstalled."
-  echo -e "\n\nScript Completed! in $(($(date +'%s') - $start)) seconds."
 }
 
 # If uninstall flag is set, execute uninstall function
