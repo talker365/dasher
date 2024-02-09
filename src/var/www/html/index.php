@@ -51,16 +51,25 @@
   var json_request = [];
   var json_modules_master = [];
   var json_modules_local = [];
+  var _moduleRow; // Drag and Drop placeholder
+  var _debug = false;
+
+  const MODULE_COLUMN_ORDER = 0;
+  const MODULE_COLUMN_NAME = 1;
+  const MODULE_COLUMN_VERSION = 2;
+  const MODULE_COLUMN_ACTIVE = 3;
+  const MODULE_COLUMN_VISIBLE = 4;
+  const MODULE_COLUMN_MANAGE = 5;
 
   setInterval(function() {
     if (!json_request["dasher"]) {
       json_request["dasher"] = true;
-        //console.log("Calling for updates");
+      if (_debug) console.log("Calling for updates");
       getJSON("dasher");
     }
   }, refreshRate);
 
-  function initialize() {
+  function initialize() { /*  */
     loadFile("modules_master.json");
     loadFile("modules_local.json");
   }
@@ -78,7 +87,7 @@
     xhttp.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
         json_request[strDataset] = false;
-        //console.log("Processing results");
+        if (_debug) console.log("Processing results");
         var strJSON = this.responseText;
         switch (strDataset) {
           case "dasher":
@@ -132,13 +141,13 @@
               switch (strDataset) {
                 case "dasher":
                   arrDasher = myObj.records[0];
-                  //console.log("getJSON(\"" + strDataset + "\"): arrAPRS = arrCurrentAPRS;");
+                  if (_debug) console.log("getJSON(\"" + strDataset + "\"): arrAPRS = arrCurrentAPRS;");
                   break;
               }
 
               // Update UI...
               updateUI(strDataset);
-              //console.log("getJSON(\"" + strDataset + "\"): updateUI(strDataset);");
+              if (_debug) console.log("getJSON(\"" + strDataset + "\"): updateUI(strDataset);");
             }
             catch (err) {
               console.log(err);
@@ -152,7 +161,7 @@
     xhttp.send();   
   }
 
-  function updateUI(strDataset) {
+  function updateUI(strDataset) { /*  */
     //var d = new Date();
     switch (strDataset) {
       case "dasher":
@@ -163,7 +172,7 @@
     }
   }
 
-  function updateDasher() {
+  function updateDasher() { /*  */
     // Storage...
     var strStorage = "";
     for (let i = 0; i < arrDasher.storage.length; i++) {
@@ -256,7 +265,7 @@
   }
 
   function openTab(tabName, element) { /*  */
-    console.log("Calling openTab('" + tabName + "', '[" + element.innerHTML + "]');");
+    if (_debug) console.log("Calling openTab('" + tabName + "', '[" + element.innerHTML + "]');");
     var i;
     var x;
     var boolAlreadyOpen = false;
@@ -293,7 +302,7 @@
     }
   }
 
-  function loadFile(filename) {
+  function loadFile(filename) { /*  */
     var xhttp = new XMLHttpRequest();
     var strUrl = "loadFile.php?filename=" + filename;
     var strReturn = "";
@@ -307,10 +316,10 @@
               break;
             case "modules_local.json":
               json_modules_local = JSON.parse(this.responseText);
-              document.getElementById("divModules").innerHTML = generateModules();
+              generateModules();
               break;
           }
-          console.log("loadFile(): filename = '" + filename + "' - Successful");
+          if (_debug) console.log("loadFile(): filename = '" + filename + "' - Successful");
         } catch (err) {
           console.log("loadFile(): filename = '" + filename + "' - Failed");
           console.log(err);
@@ -323,48 +332,84 @@
   }
 
   function generateModules() {  /* Create Modules table Modules Tab */
-    var div = document.getElementById("divAllSats");
     var tempArr = []; // Assigned below...
     var tempArr = tempArr.concat(json_modules_local);
 
     var strHtml = "";
-    var boolFirst = true;
 
     while (tempArr.length > 0) {
       var objModule = tempArr.shift();
-      if (boolFirst) {
-        boolFirst = false;
-      } else {
-        strHtml += "<br />"; 
-      }
-      strHtml += generateModuleRow(objModule);
+      generateModuleRow(objModule);
     }
-
-    return strHtml;
   }
   
+  function moduleTableOnDragStart(){  /* Handles when a module row begins to drag */
+    if (_debug) console.log("moduleTableOnDragStart()");
+    _moduleRow = event.target; 
+  }
+
+  function moduleTableOnDragOver(){ /* Handles when a module row drags over other rows */
+    if (_debug) console.log("moduleTableOnDragOver()");
+    var e = event;
+    e.preventDefault(); 
+    
+    let children= Array.from(e.target.parentNode.parentNode.children);
+    
+    if(children.indexOf(e.target.parentNode)>children.indexOf(_moduleRow)) {
+      e.target.parentNode.after(_moduleRow);
+    }
+    else {
+      e.target.parentNode.before(_moduleRow);
+    }
+  }
+
+  function moduleTableOnDragEnd(){  /* Handles when a module row begins to drag */
+    if (_debug) console.log("moduleTableOnDragEnd()");
+    var e = event;
+    e.preventDefault(); 
+    
+    let rows = Array.from(e.target.parentNode.children);
+
+    for (let i = 1; i < rows.length; i++) {
+      rows[i].cells[MODULE_COLUMN_ORDER].innerHTML = i;
+    }
+  }
+
   function generateModuleRow(objModule) {
-
-
-
     // Find a <table> element with id="myTable":
     var table = document.getElementById("tblModules");
 
     // Create an empty <tr> element and add it to the 1st position of the table:
     var row = table.insertRow(-1);
 
+    row.draggable = "true";
+    row.ondragstart = function(){moduleTableOnDragStart()};
+    row.ondragover = function(){moduleTableOnDragOver()};
+    row.ondragend = function(){moduleTableOnDragEnd()};
+
     // Insert new cells (<td> elements) at the 1st and 2nd position of the "new" <tr> element:
-    var cell1 = row.insertCell(0);
-    var cell2 = row.insertCell(1);
-    var cell3 = row.insertCell(2);
-    var cell4 = row.insertCell(3);
-    var cell5 = row.insertCell(4);
-    var cell6 = row.insertCell(5);
+    var cell_order = row.insertCell(MODULE_COLUMN_ORDER);
+    var cell_name = row.insertCell(MODULE_COLUMN_NAME);
+    var cell_version = row.insertCell(MODULE_COLUMN_VERSION);
+    var cell_active = row.insertCell(MODULE_COLUMN_ACTIVE);
+    var cell_visible = row.insertCell(MODULE_COLUMN_VISIBLE);
+    var cell_manage = row.insertCell(MODULE_COLUMN_MANAGE);
 
     // Add some text to the new cells:
-    if (objModule.order != undefined) cell1.innerHTML = objModule.order;
-    if (objModule.name != undefined) cell2.innerHTML = objModule.name;
-    if (objModule.version_installed != undefined) cell3.innerHTML = objModule.version_installed;
+    if (objModule.order != undefined) cell_order.innerHTML = objModule.order;
+    if (objModule.name != undefined) cell_name.innerHTML = objModule.name;
+    if (objModule.version_installed != undefined) {
+      if (objModule.version_available != undefined) {
+        var html = "";
+        html += objModule.version_installed;
+        if (objModule.version_available > objModule.version_installed) {
+          html += " (" + objModule.version_available + " available)";
+        }
+        cell_version.innerHTML = html;
+      } else {
+        cell_version.innerHTML = objModule.version_installed;
+      }
+    }
     if (objModule.active != undefined) {
       var html = "<span class=\"d_navSpan\"><i class=\"";
       if (objModule.active == "true") {
@@ -373,7 +418,7 @@
         html += "fa fa-toggle-off";
       }
       html += "\"></i></span>";
-      cell4.innerHTML = html;
+      cell_active.innerHTML = html;
     }
     if (objModule.visible != undefined) {
       var html = "<span class=\"d_navSpan\"><i class=\"";
@@ -383,49 +428,34 @@
         html += "fa fa-toggle-off";
       }
       html += "\"></i></span>";
-      cell5.innerHTML = html;
+      cell_visible.innerHTML = html;
     }
     if (objModule.installed != undefined) {
-      var html = "<button class=\"w3-button w3-round-xlarge w3-teal\">";
+      var html = ""; //"<button class=\"w3-button w3-round-xlarge w3-teal\">";
       if (objModule.installed == "true") {
+        if (objModule.version_available != undefined && objModule.version_installed != undefined) {
+          if (objModule.version_available > objModule.version_installed) {
+            html += "<button class=\"w3-button w3-round-xlarge w3-teal\" ";
+            html += "onclick=\"\">";
+            html += "Upgrade";
+            html += "</button>";
+          }
+        }
+        html += "<button class=\"w3-button w3-round-xlarge w3-teal\" ";
+        html += "onclick=\"\">";
         html += "Uninstall";
+        html += "</button>";
       } else {
+        html += "<button class=\"w3-button w3-round-xlarge w3-teal\" ";
+        html += "onclick=\"\">";
         html += "Install";
+        html += "</button>";
       }
-      html += "</button>";
-      cell6.innerHTML = html;
+      cell_manage.innerHTML = html;
     }
 
-
-
-
-    var strReturn = "";
-    if (objModule.name != undefined) strReturn += "<span><b>Name:</b> " + objModule.name + "</span><br />";
-    if (objModule.installer != undefined) strReturn += "<span><b>Installer:</b> " + objModule.installer + "</span><br />";
-    if (objModule.version_installed != undefined) strReturn += "<span><b>Version Installed:</b> " + objModule.version_installed + "</span><br />";
-    if (objModule.version_available != undefined) strReturn += "<span><b>Version Available:</b> " + objModule.version_available + "</span><br />";
-    if (objModule.installed != undefined) strReturn += "<span><b>Installed:</b> " + objModule.installed + "</span><br />";
-    if (objModule.active != undefined) strReturn += "<span><b>Active:</b> " + objModule.active + "</span><br />";
-    if (objModule.description != undefined) strReturn += "<span><b>Description:</b> " + objModule.description + "</span><br />";
-    if (objModule.order != undefined) strReturn += "<span><b>Order:</b> " + objModule.order + "</span><br />";
-
-/*
-    if (transmitter.status != undefined) {
-    strReturn += "<span><b>Status:</b> " + transmitter.status + "</span><br />";
-    } else {
-    strReturn += "<span><b>Status:</b> ";
-    if (transmitter.status == "inactive") {
-      strReturn += "<span class=\"w3-red\">";
-    } else if (transmitter.status == "active") {
-      strReturn += "<span class=\"w3-green\">";
-    } else {
-      strReturn += "<span class=\"\">";
-    }
-    strReturn += "&nbsp;" + transmitter.status + "&nbsp;</span><br />";
-
-    }
-*/
-    return strReturn;
+    // Hide desired columns...
+    cell_order.style = "display: none;";
   }
 
 
@@ -565,15 +595,15 @@
   <div class="w3-border w3-border-gray w3-margin w3-padding-16">
     <h2> Modules </h2>
 
-    <table id="tblModules">
-      <tr>
-        <th> Order </th>
-        <th> Name </th>
-        <th> Version </th>
-        <th> Active </th>
-        <th> Visible </th>
-        <th> Manage </th>
-      </tr>
+    <table id="tblModules" class="w3-table-all">
+        <tr>
+          <th style="display: none;"> Order </th>
+          <th> Name </th>
+          <th> Version </th>
+          <th> Active </th>
+          <th> Visible </th>
+          <th> Manage </th>
+        </tr>
     </table>
   </div>
 

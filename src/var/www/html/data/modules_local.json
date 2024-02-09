@@ -12,7 +12,26 @@
     },
     {
         "name": "APRS",
-        "installer": "aprs.sh",
+        "installer": {
+            "script":"aprs.sh",
+            "parameters": {
+                "serial": {
+                    "flag": "--serial",
+                    "required":"true",
+                    "description": "Serial number for installation"
+                },
+                "callsign": {
+                    "flag": "--callsign",
+                    "required":"true",
+                    "description": "Callsign for PyPacket"
+                },
+                "passcode": {
+                    "flag": "--passcode",
+                    "required":"true",
+                    "description": "Passcode for PyPacket"
+                }
+            }
+        },
         "version_installed": "0.1",
         "version_available": "0.2",
         "installed": "true",
@@ -78,7 +97,16 @@
     },
     {
         "name": "NOAA",
-        "installer": "noaa.sh",
+        "installer": {
+            "script":"noaa.sh",
+            "parameters": {
+                "serial": {
+                    "flag": "--serial",
+                    "required":"true",
+                    "description": "Serial number for installation"
+                }
+            }
+        },
         "version_installed": "0.1",
         "version_available": "0.1",
         "installed": "false",
