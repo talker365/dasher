@@ -68,6 +68,7 @@ check_command "pip3"
 check_command "git"
 check_command "rtl_433"
 check_command "figlet"
+check_command "multimon-ng"
 
 # Update package list
 sudo apt update
@@ -84,7 +85,7 @@ echo -e '\nCreating the noaa.sh script file ...'
 cat << EOF > "$INSTALL_DIR"/noaa/noaa.sh 
 #!/bin/bash
     #
-    # Page          051139
+    # Page        051139
     # Shenandoah  051171
     # Rockingham  051165
     # Warren  051187
@@ -121,8 +122,8 @@ cat << EOF > "$INSTALL_DIR"/noaa/source.sh
     until
       rtl_fm -d ${DEVICE} -M fm -s 22050 -E dc -F 5 -p ${PPM} -g ${GAIN} -l ${SQL} -f 162.450M |  multimon-ng -t raw -a  EAS /dev/stdin; do
       #rtl_fm -d ${DEVICE} -M fm -s 22050 -E dc -F 5 -p ${PPM} -g ${GAIN} -l ${SQL} -f 162.400M -f 162.425M -f 162.450M -f 162.525M -f 162.550M |  multimon-ng -t raw -a  EAS /dev/stdin; do
-          echo Restarting... >&2
-          sleep 2
+      echo Restarting... >&2
+      sleep 2
     done
 EOF
 

@@ -50,10 +50,11 @@ done
 check_command() {
   if [ ! -x "$(command -v "$1")" ]; then
     echo "$command_to_check does not exist or is not executable"
-    if [ "$1" == "wget"     ]; then sudo apt install -y wget; fi
-    if [ "$1" == "git"      ]; then sudo apt install -y git; fi
-    if [ "$1" == "rtl_test" ]; then ./rtl_sdr.sh ; fi
-    if [ "$1" == "figlet".  ]; then sudo apt install -y figlet; fi
+    if [ "$1" == "wget"       ]; then sudo apt install -y wget; fi
+    if [ "$1" == "git"        ]; then sudo apt install -y git; fi
+    if [ "$1" == "rtl_test"   ]; then ./rtl_sdr.sh ; fi
+    if [ "$1" == "figlet"     ]; then sudo apt install -y figlet; fi
+    if [ "$1" == "multimon-ng"]; then ./multimon-ng.sh ; fi 
   fi
 }
 
@@ -80,19 +81,10 @@ check_command "pip3"
 check_command "git"
 check_command "rtl_test"
 check_command "figlet"
+check_command "multimon-ng"
 
 # Update package list
 sudo apt update
-
-# Clone Multimon-ng repository
-cd "$INSTALL_DIR"
-git clone https://github.com/talker365/multimon-ng.git
-cd multimon-ng
-mkdir build
-cd build
-cmake ../ -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR"
-make
-make install
 
 # Clone pyPacket repository
 cd "$INSTALL_DIR"

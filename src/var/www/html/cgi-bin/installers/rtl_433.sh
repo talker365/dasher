@@ -10,8 +10,8 @@ usage() {
   echo "Usage: $0 [OPTIONS]"
   echo "  -h, --help            Display this help message"
   echo "  -u, --uninstall       Uninstall rtl_433 and its dependents"
-  echo "  -d, --device          SDR Device # "
-  echo "  -s, --serial.         SDR Serial # "
+#  echo "  -d, --device          SDR Device # "
+#  echo "  -s, --serial.         SDR Serial # "
   exit 1
 }
 
@@ -24,14 +24,14 @@ while [[ "$#" -gt 0 ]]; do
     -h|--help)
       usage
       ;;
-    -d|--device)
-      shift
-      DEVICE_NUM="$1"
-      ;;
-    -s|--serial)
-      shift
-      SERIAL_NUM="$1"
-      ;;
+#    -d|--device)
+#      shift
+#      DEVICE_NUM="$1"
+#      ;;
+#    -s|--serial)
+#      shift
+#      SERIAL_NUM="$1"
+#      ;;
     *)
       echo "Invalid option: $1"
       usage
@@ -77,6 +77,8 @@ cmake ../ -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR"
 make
 sudo make install
 
+:'
+
 # Creating the rtl_433 Service...
 echo -e '\nCreating a Servic efor the rtl_433...'
 cat << EOF > /etc/systemd/system/rtl_433-wx.service
@@ -103,6 +105,8 @@ udevadm control --reload-rules && udevadm trigger
 echo -e '\nEnabling and Starting the RTS_433 Service...'
 systemctl enable rtl_433-wx.service
 systemctl start rtl_433-wx.service
+'
+
 
 # Clean up
 cd ../..
