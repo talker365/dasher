@@ -2,9 +2,6 @@
 
 # Default installation destination
 INSTALL_DIR="/opt"
-SERIAL_NUMBER=""
-CALLSIGN=""
-PASSCODE=""
 
 # Function to display usage information
 usage() {
@@ -49,10 +46,7 @@ done
 # Function to check if a command is installed
 check_command() {
   if ! command -v "$1" &> /dev/null; then
-    if [ "$1" == "wget"    ]; then sudo apt install -y wget; fi
-    if [ "$1" == "git"     ]; then sudo apt install -y git; fi
-    if [ "$1" == "rtl_sdr" ]; then ./rtl-sdr.sh; fi
-    if [ "$1" == "figlet". ]; then sudo apt install -y figlet; fi
+    echo "$1 is not installed or not executable"
     exit 1
   fi
 }
@@ -84,71 +78,66 @@ check_command "figlet"
 # Update package list
 sudo apt update
 
+# Install dependencies
+sudo apt install -y build-essential cmake libusb-1.0-0-dev
+
 # Clone Multimon-ng repository
-cd "$INSTALL_DIR"
-git clone https://github.com/talker365/multimon-ng.git
-cd multimon-ng
+cd "$INSTALL_DIR" || exit 1
+git clone https://github.com/EliasOenal/multimon-ng.git
+cd multimon-ng || exit 1
 mkdir build
-cd build
+cd build || exit 1
 cmake ../ -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR"
 make
-make install
+sudo make install
 
 # Clone pyPacket repository
-cd "$INSTALL_DIR"
-echo -e 'Cloning pyPacket repository...'
+cd "$INSTALL_DIR" || exit 1
+echo "Cloning pyPacket repository..."
 git clone https://github.com/talker365/pypacket.git
-cd pypacket
+cd pypacket || exit 1
 
-# Edit requirements.txt file and change pytest variable
+# Edit requirements.txt file and change pytest version
 sed -i 's/^pytest==.*/pytest==4.6.9/' requirements.txt
 pip3 install -r requirements.txt
 
-# Insert Serial Listener @ line #24 in file pypacket/base/configuration.py
-#sed -i '24i \
-#    def serial(self): \
-#        """Gets the configured listener serial number setting.""" \
-#        return self.data['\''listener'\'']['\''serial'\'']' pypacket/base/configuration.py
+# Update SDR's Serial Number in the config/configuration.json file
+sed -i 's/"serial": "12345678"/"serial": "'"$SERIAL_NUMBER"'"/' "$INSTALL_DIR"/pypacket/config/configuration.json
 
-# Insert the SDR's Serial Number in the config/configuration.json file.
-sed -i 's/"serial": "12345678"/"serial": "'"$SERIAL_NUMBER"'"/' /opt/pypacket/config/configuration.json
+# Update pypacket/implementations/rtl_listener.py
+sed -i '12s/.*/config.sample_rate(), "-l", "0", "-d", config.serial(), "-g", config.gain(), "-"],/' implementations/rtl_listener.py
 
-#Update pypacket/implementations/rtl_listener.py, changing line 12
-sed -i '12s/.*/config.sample_rate(), "-l", "0", "-d", config.serial(), "-g", config.gain(), "-"],/' pypacket/implementations/rtl_listener.py
-
-# Creating the pyPacket profile file...
+# Create the pyPacket profile file
 echo -e '\nCreating the file /etc/profile.d/02-pypacket.sh...'
-cat << EOF > /etc/profile.d/02-pypacket.sh
+cat << EOF | sudo tee "$INSTALL_DIR"/etc/profile.d/02-pypacket.sh > /dev/null
 export PYPACKET_USERNAME="$CALLSIGN"
 export PYPACKET_PASSWORD="$PASSCODE"
 EOF
 
-#Creating file /opt/pypacket/start.sh
+# Create the start script
 echo -e '\nCreating the file /opt/pypacket/start.sh...'
-cat << EOF > /opt/pypacket/start.sh
+cat << EOF | sudo tee "$INSTALL_DIR"/pypacket/start.sh > /dev/null
 #!/bin/bash
 export PYPACKET_USERNAME="$CALLSIGN"
 export PYPACKET_PASSWORD="$PASSCODE"
-cd /opt/pypacket/
+cd "$INSTALL_DIR"/pypacket/ || exit 1
 python3 main.py
 EOF
 
-chmod +x /opt/pypacket/start.sh
-chmod +x /opt/pypacket/main.py
+sudo chmod +x "$INSTALL_DIR"/pypacket/start.sh
+sudo chmod +x "$INSTALL_DIR"/pypacket/main.py
 
-#Creating a System Service for pyPacket
-echo -e '\nCreating the System Service for pyPacket..'
-cat << EOF > /etc/systemd/system/pyPacket.service
-# Pypacket service for systemd
-
+# Create the systemd service for pyPacket
+echo -e '\nCreating the Systemd service for pyPacket...'
+cat << EOF | sudo tee /etc/systemd/system/pyPacket.service > /dev/null
 [Unit]
 Description=PyPacket - ARPS / IGATE Decoder
 
 [Service]
 Type=forking
-ExecStart=/usr/bin/screen -d -m -S PyPacket /opt/pypacket/./start.sh
+ExecStart=/usr/bin/screen -d -m -S PyPacket "$INSTALL_DIR"/pypacket/./start.sh
 ExecStop=/usr/bin/killall -p -w -s 2 start.sh
-WorkingDirectory=/opt/pypacket
+WorkingDirectory="$INSTALL_DIR"/pypacket
 Restart=on-failure
 RestartSec=5
 
@@ -156,9 +145,9 @@ RestartSec=5
 WantedBy=multi-user.target
 EOF
 
-# Enabling and Starting the pyPacket Service...
-echo -e 'Enabling and starting the pyPacket Service...'
-systemctl enable pyPacket
-systemctl start pyPacket
+# Enable and start the pyPacket service
+echo "Enabling and starting the pyPacket service..."
+sudo systemctl enable pyPacket
+sudo systemctl start pyPacket
 
-echo -e ' APRS / pyPacket and its dependents have been installed successfully.'
+echo "APRS / pyPacket and its dependents have been installed successfully."

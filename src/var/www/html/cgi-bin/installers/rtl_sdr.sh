@@ -28,25 +28,15 @@ while [[ "$#" -gt 0 ]]; do
   shift
 done
 
-# Function to check if a command is installed
-check_command() {
-  if ! command -v "$1" &> /dev/null; then
-    if [ "$1" == "wget"    ]; then sudo apt install -y wget; fi
-    if [ "$1" == "git"     ]; then sudo apt install -y git; fi
-    if [ "$1" == "figlet". ]; then sudo apt install -y figlet; fi
-    exit 1
-  fi
-}
-
-# Function to uninstall rtl-sdr and its dependents
+# Function to uninstall RTL-SDR and its dependents
 uninstall_rtlsdr() {
+  echo "Uninstalling RTL-SDR and its dependents..."
   sudo apt remove -y rtl-sdr
   sudo apt autoremove -y
-  sudo rm /etc/modprobe.d/blacklist-rtlsdr.conf
+  sudo rm -f /etc/modprobe.d/blacklist-rtlsdr.conf
+  sudo rm -f /etc/udev/rules.d/rtl-sdr.rules
   sudo ldconfig
-  sudo rm -rf "$INSTALL_DIR"/bin/rtl_*
-  sudo rm -rf "$INSTALL_DIR"/include/rtl-sdr*
-  sudo rm -rf "$INSTALL_DIR"/lib/librtlsdr*
+  sudo rm -rf "$INSTALL_DIR/bin/rtl_*" "$INSTALL_DIR/include/rtl-sdr*" "$INSTALL_DIR/lib/librtlsdr*"
   echo "RTL-SDR and its dependents have been uninstalled."
 }
 
@@ -56,40 +46,53 @@ if [ "$uninstall" = true ]; then
   exit 0
 fi
 
+# Function to check if a command is installed
+check_command() {
+  if ! command -v "$1" &> /dev/null; then
+    echo "$1 is not installed. Installing..."
+    sudo apt install -y "$1"
+    if [ $? -ne 0 ]; then
+      echo "Failed to install $1. Exiting."
+      exit 1
+    fi
+  fi
+}
+
 # Check if required commands are installed
 check_command "git"
 check_command "figlet"
+check_command "cmake"
+check_command "build-essential"
+check_command "libusb-1.0-0-dev"
 
-# Otherwise, install rtl-sdr and its dependents
+# Otherwise, install RTL-SDR and its dependents
 
 # Update package list
 sudo apt update
 
-# Install dependencies
-sudo apt install -y git cmake build-essential libusb-1.0-0-dev
-
 # Clone RTL-SDR repository
-cd "$INSTALL_DIR"
-#git clone https://github.com/osmocom/rtl-sdr.git
+echo "Cloning RTL-SDR repository..."
+cd "$INSTALL_DIR" || exit 1
 git clone https://github.com/talker365/rtl-sdr.git
-cd rtl-sdr
+cd rtl-sdr || exit 1
 
-# Compile and install rtl_433 to the specified destination
+# Compile and install RTL-SDR to the specified destination
+echo "Compiling and installing RTL-SDR..."
 mkdir build
-cd build
+cd build || exit 1
 cmake ../ -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR"
 make
 sudo make install
 sudo ldconfig
 
-# Installing the rtl-sdr.rules...
-echo -e '\nCreating the rtl-sdr rules file...'
-wget https://raw.githubusercontent.com/osmocom/rtl-sdr/master/rtl-sdr.rules -O /etc/udev/rules.d/rtl-sdr.rules
+# Install rtl-sdr.rules
+echo "Installing rtl-sdr rules file..."
+sudo wget -O /etc/udev/rules.d/rtl-sdr.rules https://raw.githubusercontent.com/osmocom/rtl-sdr/master/rtl-sdr.rules
 sudo udevadm control --reload-rules
 
-# Creating the SDR Blacklist file...
-echo -e '\nCreating the USB module blacklist...'
-cat << EOF > /etc/modprobe.d/blacklist-rtlsdr.conf
+# Create blacklist-rtlsdr.conf
+echo "Creating USB module blacklist..."
+cat << EOF | sudo tee /etc/modprobe.d/blacklist-rtlsdr.conf > /dev/null
 blacklist dvb_core
 blacklist dvb_usb_rtl2832u
 blacklist dvb_usb_rtl28xxu
@@ -110,25 +113,18 @@ install rtl2832_sdr /bin/false
 install rtl2838 /bin/false
 EOF
 
-# Unloading certain usb modules...
-echo -e '\nUnloading certain usb modules...'
-modprobe -r dvb_core
-modprobe -r dvb_usb_rtl2832u
-modprobe -r dvb_usb_rtl28xxu
-modprobe -r dvb_usb_v2
-modprobe -r r820t
-modprobe -r rtl2830
-modprobe -r rtl2832
-modprobe -r rtl2832_sdr
-modprobe -r rtl2838
-depmod -a
+# Unload certain USB modules
+echo "Unloading certain USB modules..."
+sudo modprobe -r dvb_core dvb_usb_rtl2832u dvb_usb_rtl28xxu dvb_usb_v2 r820t rtl2830 rtl2832 rtl2832_sdr rtl2838
+sudo depmod -a
 
-# Updating the Boot Img...
-echo -e '\nUpdating the Boot Img (This may take a few seconds)...'
-update-initramfs -u
+# Update the boot image
+echo "Updating the boot image..."
+sudo update-initramfs -u
 
 # Clean up
+echo "Cleaning up..."
 cd ../..
-rm -rf rtl-sdr
+sudo rm -rf rtl-sdr
 
-echo 'RTL-SDRlibrary and its dependents have been installed successfully.'
+echo "RTL-SDR library and its dependents have been installed successfully."
