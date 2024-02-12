@@ -3,7 +3,7 @@
 <br />
 <br />
 <div class="w3-bar w3-bottom w3-black w3-small" style="z-index:2">
-  <div class="w3-bar-item w3-left">
+  <div class="w3-bar-item w3-left w3-hide-small">
     Half Baked Circuits
     N4LDR & WD4VA
   </div>

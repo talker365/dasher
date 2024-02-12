@@ -1,17 +1,19 @@
 [
     {
         "name": "ADS-B",
+        "type": "ui",
         "installer": "adsb.sh",
         "version_installed": "0.1",
         "version_available": "0.1",
         "installed": "true",
         "active": "false",
         "visible": "true",
-        "description": "",
+        "description": "Track aircraft traffic on 1090 MHz and 978 MHz",
         "order": 1
     },
     {
         "name": "APRS",
+        "type": "ui",
         "installer": {
             "script":"aprs.sh",
             "parameters": {
@@ -37,66 +39,72 @@
         "installed": "true",
         "active": "true",
         "visible": "true",
-        "description": "",
+        "description": "Track portable and mobile stations on HAM frequencies.",
         "order": 2
     },
     {
         "name": "ATCS",
+        "type": "ui",
         "installer": "atcs.sh",
         "version_installed": "0.1",
         "version_available": "0.1",
         "installed": "true",
         "active": "true",
         "visible": "true",
-        "description": "",
+        "description": "Track train traffic.",
         "order": 3
     },
     {
         "name": "DreamCatcher",
+        "type": "ui",
         "installer": "dreamcatcher.sh",
         "version_installed": "0.1",
         "version_available": "0.1",
         "installed": "false",
         "active": "false",
         "visible": "false",
-        "description": "",
+        "description": "Connect to Othernet Dream Catcher receiver.",
         "order": 4
     },
     {
         "name": "Echolink",
+        "type": "ui",
         "installer": "echolink.sh",
         "version_installed": "0.1",
         "version_available": "0.1",
         "installed": "false",
         "active": "false",
         "visible": "false",
-        "description": "",
+        "description": "Manage Echolink host device.",
         "order": 5
     },
     {
         "name": "GOES",
+        "type": "ui",
         "installer": "goes.sh",
         "version_installed": "0.1",
         "version_available": "0.1",
         "installed": "false",
         "active": "false",
         "visible": "false",
-        "description": "",
+        "description": "Monitor geostationary NOAA weather satellite.",
         "order": 6
     },
     {
         "name": "GPS",
+        "type": "ui",
         "installer": "gps.sh",
         "version_installed": "0.1",
         "version_available": "0.1",
         "installed": "false",
         "active": "false",
         "visible": "false",
-        "description": "",
+        "description": "Obtain GPS position and timestamp.",
         "order": 7
     },
     {
         "name": "NOAA",
+        "type": "ui",
         "installer": {
             "script":"noaa.sh",
             "parameters": {
@@ -112,51 +120,55 @@
         "installed": "false",
         "active": "false",
         "visible": "false",
-        "description": "",
+        "description": "Monitor NOAA Weather Radio alerts",
         "order": 8
     },
     {
         "name": "Packet",
+        "type": "ui",
         "installer": "packet.sh",
         "version_installed": "0.1",
         "version_available": "0.1",
         "installed": "false",
         "active": "false",
         "visible": "false",
-        "description": "",
+        "description": "Transmit and receive AX.25 packets.",
         "order": 9
     },
     {
         "name": "Sat Tracker",
+        "type": "ui",
         "installer": "sattracker.sh",
         "version_installed": "0.1",
         "version_available": "0.1",
         "installed": "false",
         "active": "false",
         "visible": "false",
-        "description": "",
+        "description": "View current positions and get pass predictions for satellites.",
         "order": 10
     },
     {
         "name": "Weather",
+        "type": "ui",
         "installer": "weather.sh",
         "version_installed": "0.1",
         "version_available": "0.1",
         "installed": "false",
         "active": "false",
         "visible": "false",
-        "description": "",
+        "description": "Monitor remote weather senors using the 433 MHZ ISM band.",
         "order": 11
     },
     {
         "name": "TPMS",
+        "type": "ui",
         "installer": "tpms.sh",
         "version_installed": "0.1",
         "version_available": "0.1",
         "installed": "false",
         "active": "false",
         "visible": "false",
-        "description": "",
+        "description": "Monitor tire pressure sensors on 315? MHz.",
        "order": 12
     }
 ]

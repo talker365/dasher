@@ -395,40 +395,57 @@
     var cell_visible = row.insertCell(MODULE_COLUMN_VISIBLE);
     var cell_manage = row.insertCell(MODULE_COLUMN_MANAGE);
 
+    cell_name.className = "w3-large";
+    cell_version.className = "w3-hide-small";
+
     // Add some text to the new cells:
-    if (objModule.order != undefined) cell_order.innerHTML = objModule.order;
-    if (objModule.name != undefined) cell_name.innerHTML = objModule.name;
+    if (objModule.order != undefined) {
+      cell_order.innerHTML = objModule.order;
+    } else {
+      cell_order.innerHTML = "-1";
+    }
+    if (objModule.name != undefined) {
+      cell_name.innerHTML = objModule.name;
+    } else {
+      cell_name.innerHTML = "n/a";
+    }
     if (objModule.version_installed != undefined) {
       if (objModule.version_available != undefined) {
         var html = "";
         html += objModule.version_installed;
         if (objModule.version_available > objModule.version_installed) {
-          html += " (" + objModule.version_available + " available)";
+          html += "<br /> (" + objModule.version_available + " available)";
         }
         cell_version.innerHTML = html;
       } else {
         cell_version.innerHTML = objModule.version_installed;
       }
+    } else {
+      cell_active.innerHTML = "n/a";
     }
     if (objModule.active != undefined) {
-      var html = "<span class=\"d_navSpan\"><i class=\"";
+      var html = "<span class=\"d_navSpan w3-xlarge\">";
       if (objModule.active == "true") {
-        html += "fa fa-toggle-on";
+        html += "<i class=\"fa fa-toggle-on\" onclick=\"manageModule('" + objModule.name + "', 'inactivate')\"></i>";
       } else {
-        html += "fa fa-toggle-off";
+        html += "<i class=\"fa fa-toggle-off\" onclick=\"manageModule('" + objModule.name + "', 'activate')\"></i>";
       }
-      html += "\"></i></span>";
+      html += "</span>";
       cell_active.innerHTML = html;
+    } else {
+      cell_active.innerHTML = "n/a";
     }
     if (objModule.visible != undefined) {
-      var html = "<span class=\"d_navSpan\"><i class=\"";
+      var html = "<span class=\"d_navSpan w3-xlarge\">";
       if (objModule.visible == "true") {
-        html += "fa fa-toggle-on";
+        html += "<i class=\"fa fa-toggle-on\" onclick=\"manageModule('" + objModule.name + "', 'hide')\"></i>";
       } else {
-        html += "fa fa-toggle-off";
+        html += "<i class=\"fa fa-toggle-off\" onclick=\"manageModule('" + objModule.name + "', 'show')\"></i>";
       }
-      html += "\"></i></span>";
+      html += "</span>";
       cell_visible.innerHTML = html;
+    } else {
+      cell_visible.innerHTML = "n/a";
     }
     if (objModule.installed != undefined) {
       var html = ""; //"<button class=\"w3-button w3-round-xlarge w3-teal\">";
@@ -436,31 +453,242 @@
         if (objModule.version_available != undefined && objModule.version_installed != undefined) {
           if (objModule.version_available > objModule.version_installed) {
             html += "<button class=\"w3-button w3-round-xlarge w3-teal\" ";
-            html += "onclick=\"\">";
+            html += "onclick=\"manageModule('" + objModule.name + "', 'upgrade')\">";
             html += "Upgrade";
             html += "</button>";
           }
         }
         html += "<button class=\"w3-button w3-round-xlarge w3-teal\" ";
-        html += "onclick=\"\">";
+        html += "onclick=\"manageModule('" + objModule.name + "', 'uninstall')\">";
         html += "Uninstall";
         html += "</button>";
       } else {
         html += "<button class=\"w3-button w3-round-xlarge w3-teal\" ";
-        html += "onclick=\"\">";
+        html += "onclick=\"manageModule('" + objModule.name + "', 'install')\">";
         html += "Install";
         html += "</button>";
       }
       cell_manage.innerHTML = html;
+    } else {
+      cell_manage.innerHTML = "n/a";
     }
 
     // Hide desired columns...
     cell_order.style = "display: none;";
   }
 
+  function manageModule(moduleName, action) { /*  */
+    var e = event;
+    var eventButton = event.target; 
+
+    populateManageModule(moduleName, action, eventButton);
+    document.getElementById("divManageModule").style.display = "block";
+  }
+
+  function populateManageModule(moduleName, action, eventButton) { /*  */
+    var objModule = getModuleJson(moduleName);
+
+    //--------------------------------------------------------------
+    // Set header...
+    //--------------------------------------------------------------
+    var strHeader = properCapitalization(action) + " " + moduleName + " module";
+    document.getElementById("headerManageModule").innerHTML = strHeader;
+
+    //--------------------------------------------------------------
+    // Set body...
+    //--------------------------------------------------------------
+    //var strBody = objModule.description;
+    var divBody = document.getElementById("bodyManageModule");
+
+    // remove old content
+    while (divBody.hasChildNodes()) {
+      divBody.removeChild(divBody.childNodes[0]);
+    }
+
+    var hDescription = document.createElement("H3");
+    var strHtml = "Module Description";
+    hDescription.innerHTML = strHtml;
+    divBody.appendChild(hDescription);
+
+    var pDescription = document.createElement("P");
+    var strHtml = "";
+    if (objModule.description != undefined) {
+      strHtml += objModule.description;
+    } else {
+      strHtml += "n/a";
+    }
+    pDescription.innerHTML = strHtml;
+    divBody.appendChild(pDescription);
+
+    var hAction = document.createElement("H3");
+    var strHtml = properCapitalization(action);
+    hAction.innerHTML = strHtml;
+    divBody.appendChild(hAction);
+
+    switch(action) {
+      case "activate":
+        var pAction = document.createElement("P");
+        var strHtml = "";
+        strHtml += "By clicking \"Activate\" below, you will be turning on ";
+        strHtml += "any related background services.  You can adjust the ";
+        strHtml += "specific settings for this module in its Settings tab. ";
+        pAction.innerHTML = strHtml;
+        divBody.appendChild(pAction);
+        break;
+      case "inactivate":
+        var pAction = document.createElement("P");
+        var strHtml = "";
+        strHtml += "By clicking \"Inactivate\" below, you will be turning off ";
+        strHtml += "any related background services.  It will not remove the ";
+        strHtml += "installed components, but it will free up any SDRs that ";
+        strHtml += "are associated.";
+        pAction.innerHTML = strHtml;
+        divBody.appendChild(pAction);
+        break;
+      case "hide":
+        var pAction = document.createElement("P");
+        var strHtml = "";
+        strHtml += "By clicking \"Hide\" below, you will be setting this ";
+        strHtml += "module to be hidden in the navigation bar on the left ";
+        strHtml += "side of the screen.  This does not uninstall the module ";
+        strHtml += "or stop any related services which might be running.";
+        pAction.innerHTML = strHtml;
+        divBody.appendChild(pAction);
+        break;
+      case "show":
+        var pAction = document.createElement("P");
+        var strHtml = "";
+        strHtml += "By clicking \"Show\" below, you will be setting this ";
+        strHtml += "module to be displayed in the navigation bar on the left ";
+        strHtml += "side of the screen.";
+        pAction.innerHTML = strHtml;
+        divBody.appendChild(pAction);
+        break;
+      case "upgrade":
+        var pAction = document.createElement("P");
+        var strHtml = "";
+        strHtml += "By clicking \"Upgrade\" below, you will be updating the module's ";
+        strHtml += "installed components and related services.";
+        strHtml += "Please visit the module's Settings tab to make changes ";
+        strHtml += "after installation is complete. ";
+        pAction.innerHTML = strHtml;
+        divBody.appendChild(pAction);
+        break;
+      case "uninstall":
+        var pAction = document.createElement("P");
+        var strHtml = "";
+        strHtml += "By clicking \"Uninstall\" below, you will be turning off ";
+        strHtml += "any related background services.  This process will remove ";
+        strHtml += "installed components and free up any associated SDRs. ";
+        pAction.innerHTML = strHtml;
+        divBody.appendChild(pAction);
+        break;
+      case "install":
+        var pAction = document.createElement("P");
+        var strHtml = "";
+        strHtml += "By clicking \"Install\" below, you will be installing the ";
+        strHtml += "necessary components and any related background services. ";
+        strHtml += "Please visit the module's Settings tab to make changes ";
+        strHtml += "after installation is complete. ";
+        pAction.innerHTML = strHtml;
+        divBody.appendChild(pAction);
+        break;
+      default:
+        // code block
+    }
 
 
 
+    //--------------------------------------------------------------
+    // Set footer...
+    //--------------------------------------------------------------
+    var divFooter = document.getElementById("footerManageModule");
+
+    // remove old buttons
+    while (divFooter.hasChildNodes()) {
+      divFooter.removeChild(divFooter.childNodes[0]);
+    }
+
+    // create new buttons
+    var btnAction = document.createElement("BUTTON");
+    btnAction.className = "w3-button w3-round-xlarge w3-teal";
+    btnAction.onclick = function(){
+      setManageModuleButton(moduleName,action,eventButton);
+      document.getElementById("divManageModule").style.display = "none";
+    };
+    btnAction.innerHTML = properCapitalization(action);
+    btnAction.style.marginRight = "3ch";
+
+    var btnCancel = document.createElement("BUTTON");
+    btnCancel.className = "w3-button w3-round-xlarge w3-teal";
+    btnCancel.onclick = function(){
+      document.getElementById("divManageModule").style.display = "none";
+    };
+    btnCancel.innerHTML = "Cancel";
+
+    // add new buttons
+    divFooter.appendChild(btnAction);
+    divFooter.appendChild(btnCancel);
+
+  }
+
+  function getModuleJson(moduleName) { /*  */
+    var tempArr = []; // Assigned below...
+    var tempArr = tempArr.concat(json_modules_local);
+
+    while (tempArr.length > 0) {
+      var objModule = tempArr.shift();
+      if (objModule.name != undefined) {
+        if (objModule.name) {
+            return objModule;
+        }
+      }
+    }
+    const err = {name:"Module Name Not Found", message:"getModuleJson() was unable to find '" + moduleName + "'"};
+    throw err
+
+  }
+
+
+  function setManageModuleButton(moduleName,action,eventButton) { /* Sets button state */
+    switch(action) {
+      case "activate":
+        eventButton.className = "fa fa-toggle-on";
+        eventButton.onclick = function(){manageModule(moduleName,"inactivate")};
+        break;
+      case "inactivate":
+        eventButton.className = "fa fa-toggle-off";
+        eventButton.onclick = function(){manageModule(moduleName,"activate")};
+        break;
+      case "hide":
+        eventButton.className = "fa fa-toggle-off";
+        eventButton.onclick = function(){manageModule(moduleName,"show")};
+        break;
+      case "show":
+        eventButton.className = "fa fa-toggle-on";
+        eventButton.onclick = function(){manageModule(moduleName,"hide")};
+        break;
+      case "upgrade":
+        // code block
+        break;
+      case "uninstall":
+        // code block
+        break;
+      case "install":
+        // code block
+        break;
+      default:
+        // code block
+    }
+  }
+
+  function properCapitalization(strText) { /* Returns strText with capitalized first character */
+    var strReturn = strText.charAt(0);
+    strReturn = strReturn.toUpperCase();
+    strReturn += strText.slice(1);
+
+    return strReturn;
+  }
 
 </script>
 
@@ -599,7 +827,7 @@
         <tr>
           <th style="display: none;"> Order </th>
           <th> Name </th>
-          <th> Version </th>
+          <th class="w3-hide-small"> Version </th>
           <th> Active </th>
           <th> Visible </th>
           <th> Manage </th>
@@ -610,10 +838,19 @@
 
 
 
-  <div id="divModules">
+  <div id="divManageModule" class="w3-modal w3-card-4" style="display: none;">
+    <div class="w3-modal-content">
+      <header class="w3-container w3-blue">
+        <h1 id="headerManageModule">manage module</h1>
+      </header>
+      <div id="bodyManageModule" class="w3-container">
+        <p>do some stuff...</p>
+      </div>
+      <footer id="footerManageModule" class="w3-container w3-blue w3-right-align" style="padding-top: 1ch; padding-bottom: 1ch;">
+        <h5>put some close buttons here</h5>
+      </footer>
+    </div>
   </div>
-
-
 
 
 
