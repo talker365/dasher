@@ -43,6 +43,38 @@ while [[ "$#" -gt 0 ]]; do
   shift
 done
 
+# Check if mandatory options are provided
+missing_options=()
+if [[ -z "$SERIAL_NUMBER" ]]; then
+  missing_options+=("-s |--serial")
+fi
+
+if [[ -z "$CALLSIGN" ]]; then
+  missing_options+=("-c |--callsign")
+fi
+
+if [[ -z "$PASSCODE" ]]; then
+  missing_options+=("-p |--passcode")
+fi
+
+if [[ ${#missing_options[@]} -gt 0 ]]; then
+  echo "Error: Mandatory options ${missing_options[@]} are required."
+  exit 1
+fi
+
+
+# Function to verify callsign format
+verify_callsign() {
+    local callsign=$(echo "$CALLSIGN" | tr '[:lower:]' '[:upper:]')  # Convert to uppercase
+    local pattern="^[A-Z]{1,2}[0-9][A-Z]{1,3}$"
+    if [[ $callsign =~ $pattern && ${#callsign} -le 6 ]]; then
+        echo "$CALLSIGN is a valid Amateur Radio Callsign."
+    else
+        echo "$CALLSIGN is not a valid Amateur Radio Callsign."
+        exit 1
+    fi
+}
+
 # Function to check if a command is installed
 check_command() {
   if ! command -v "$1" &> /dev/null; then
@@ -66,6 +98,8 @@ if [ "$uninstall" = true ]; then
 fi
 
 # Otherwise, install pyPacket and its dependents
+verify_callsign "$CALLSIGN"
+
 
 # Check if required commands are installed
 check_command "pip3"
