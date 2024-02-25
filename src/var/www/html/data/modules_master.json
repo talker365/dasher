@@ -2,12 +2,16 @@
     {
         "name": "ADS-B",
         "type": "ui",
-        "installer": "adsb.sh",
+        "installer": {
+            "script":"adsb.sh",
+            "parameters": []
+        },
         "version_available": "0.1",
         "description": "Track aircraft traffic on 1090 MHz and 978 MHz"
     },
     {
         "name": "APRS",
+        "type": "ui",
         "installer": {
             "script":"aprs.sh",
             "parameters": [
@@ -37,70 +41,100 @@
     {
         "name": "ATCS",
         "type": "ui",
-        "installer": "atcs.sh",
+        "installer": {
+            "script":"atcs.sh",
+            "parameters": []
+        },
         "version_available": "0.1",
         "description": "Track train traffic."
     },
     {
         "name": "DreamCatcher",
         "type": "ui",
-        "installer": "dreamcatcher.sh",
+        "installer": {
+            "script":"dreamcatcher.sh",
+            "parameters": []
+        },
         "version_available": "0.1",
         "description": "Connect to Othernet Dream Catcher receiver."
     },
     {
         "name": "Echolink",
         "type": "ui",
-        "installer": "echolink.sh",
+        "installer": {
+            "script":"echolink.sh",
+            "parameters": []
+        },
         "version_available": "0.1",
         "description": "Manage Echolink host device."
     },
     {
         "name": "GOES",
         "type": "ui",
-        "installer": "goes.sh",
+        "installer": {
+            "script":"goes.sh",
+            "parameters": []
+        },
         "version_available": "0.1",
         "description": "Monitor geostationary NOAA weather satellite."
     },
     {
         "name": "GPS",
         "type": "ui",
-        "installer": "gps.sh",
+        "installer": {
+            "script":"gps.sh",
+            "parameters": []
+        },
         "version_available": "0.1",
         "description": "Obtain GPS position and timestamp."
     },
     {
         "name": "NOAA",
         "type": "ui",
-        "installer": "noaa.sh",
+        "installer": {
+            "script":"noaa.sh",
+            "parameters": []
+        },
         "version_available": "0.1",
         "description": "Monitor NOAA Weather Radio alerts"
     },
     {
         "name": "Packet",
         "type": "ui",
-        "installer": "packet.sh",
+        "installer": {
+            "script":"packet.sh",
+            "parameters": []
+        },
         "version_available": "0.1",
         "description": "Transmit and receive AX.25 packets."
     },
     {
         "name": "Sat Tracker",
         "type": "ui",
-        "installer": "sattracker.sh",
+        "installer": {
+            "script":"sattracker.sh",
+            "parameters": []
+        },
         "version_available": "0.1",
         "description": "View current positions and get pass predictions for satellites."
     },
     {
         "name": "Weather",
         "type": "ui",
-        "installer": "weather.sh",
+        "installer": {
+            "script":"weather.sh",
+            "parameters": []
+        },
         "version_available": "0.1",
         "description": "Monitor remote weather senors using the 433 MHZ ISM band."
     },
     {
         "name": "TPMS",
         "type": "ui",
-        "installer": "tpms.sh",
+        "installer": {
+            "script":"tpms.sh",
+            "parameters": []
+        },
         "version_available": "0.1",
         "description": "Monitor tire pressure sensors on 315? MHz."
     },
