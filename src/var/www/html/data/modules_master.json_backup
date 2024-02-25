@@ -30,7 +30,7 @@
                     "description": "Passcode for APRS-IS"
                 }
             ]
-        },
+        },        "installer": "aprs.sh",
         "version_available": "0.2",
         "description": "Track portable and mobile stations on HAM frequencies."
     },
@@ -53,7 +53,7 @@
         "type": "ui",
         "installer": "echolink.sh",
         "version_available": "0.1",
-        "description": "Manage Echolink host device."
+        "description": "Manage Echolink host device.",
     },
     {
         "name": "GOES",
@@ -103,15 +103,5 @@
         "installer": "tpms.sh",
         "version_available": "0.1",
         "description": "Monitor tire pressure sensors on 315? MHz."
-    },
-    {
-        "name": "CLI Test",
-        "type": "ui",
-        "installer": {
-            "script":"ll.sh",
-            "parameters": []
-        },
-        "version_available": "0.1",
-        "description": "Test script, does a directory listing..."
     }
 ]

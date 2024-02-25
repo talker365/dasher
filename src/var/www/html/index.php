@@ -302,7 +302,7 @@
     }
   }
 
-  function loadFile(filename) { /*  */
+  function loadFile(filename) { /* loads json files */
     var xhttp = new XMLHttpRequest();
     var strUrl = "loadFile.php?filename=" + filename;
     var strReturn = "";
@@ -331,12 +331,76 @@
     xhttp.send();   
   }
 
+  function saveFile(filename) {
+    var xhttp = new XMLHttpRequest();
+    var strUrl = "saveFile.php";
+    var strPost = "";
+
+    strPost += "filename=" + filename;
+    switch(filename) {
+      case "modules_master.json":
+        strPost += "&content=" + JSON.stringify(json_modules_master);
+        break;
+      case "modules_local.json":
+        strPost += "&content=" + JSON.stringify(json_modules_local);
+        break;
+    }
+
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        console.log(this.responseText);
+        console.log("saveFile(): filename = '" + filename + "' - Successful");
+      }
+    };
+
+    console.log("strPost:  " + strPost);
+
+    xhttp.open("POST", strUrl);
+    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttp.send(strPost);   
+  }
+
   function generateModules() {  /* Create Modules table Modules Tab */
     var tempArr = []; // Assigned below...
     var tempArr = tempArr.concat(json_modules_local);
 
-    var strHtml = "";
+    var oOldTable = document.getElementById("tblModules");
+    var oDivTable = document.getElementById("divModules");
+    var oTable = document.createElement("TABLE");
+    oTable.id = "tblModules";
+    oTable.className = "w3-table-all";
 
+
+    // Create an empty <tr> element and add it to the 1st position of the table:
+    var oRow = oTable.insertRow(-1);
+
+
+    // Create header row:
+    var oHeader_order = oRow.insertCell(MODULE_COLUMN_ORDER);
+    var oHeader_name = oRow.insertCell(MODULE_COLUMN_NAME);
+    var oHeader_version = oRow.insertCell(MODULE_COLUMN_VERSION);
+    var oHeader_active = oRow.insertCell(MODULE_COLUMN_ACTIVE);
+    var oHeader_visible = oRow.insertCell(MODULE_COLUMN_VISIBLE);
+    var oHeader_manage = oRow.insertCell(MODULE_COLUMN_MANAGE);
+
+    // Populate header names...
+    oHeader_order.innerHTML = "Order";
+    oHeader_name.innerHTML = "Name";
+    oHeader_version.innerHTML = "Version";
+    oHeader_active.innerHTML = "Active";
+    oHeader_visible.innerHTML = "Visible";
+    oHeader_manage.innerHTML = "Manage";
+
+    // Set option display based on screen size...
+    oHeader_version.className = "w3-hide-small";
+
+    // Hide desired columns...
+    oHeader_order.style = "display: none;";
+
+    // Assign new table...
+    oDivTable.replaceChild(oTable, oOldTable);
+
+    // Populate new table...
     while (tempArr.length > 0) {
       var objModule = tempArr.shift();
       generateModuleRow(objModule);
@@ -375,7 +439,7 @@
     }
   }
 
-  function generateModuleRow(objModule) {
+  function generateModuleRow(objModule) { /* Adds module row in Modules Tab */
     // Find a <table> element with id="myTable":
     var table = document.getElementById("tblModules");
 
@@ -426,9 +490,9 @@
     if (objModule.active != undefined) {
       var html = "<span class=\"d_navSpan w3-xlarge\">";
       if (objModule.active == "true") {
-        html += "<i class=\"fa fa-toggle-on\" onclick=\"manageModule('" + objModule.name + "', 'inactivate')\"></i>";
+        html += "<i class=\"fa fa-toggle-on\" onclick=\"startManageModule('" + objModule.name + "', 'inactivate')\"></i>";
       } else {
-        html += "<i class=\"fa fa-toggle-off\" onclick=\"manageModule('" + objModule.name + "', 'activate')\"></i>";
+        html += "<i class=\"fa fa-toggle-off\" onclick=\"startManageModule('" + objModule.name + "', 'activate')\"></i>";
       }
       html += "</span>";
       cell_active.innerHTML = html;
@@ -438,9 +502,9 @@
     if (objModule.visible != undefined) {
       var html = "<span class=\"d_navSpan w3-xlarge\">";
       if (objModule.visible == "true") {
-        html += "<i class=\"fa fa-toggle-on\" onclick=\"manageModule('" + objModule.name + "', 'hide')\"></i>";
+        html += "<i class=\"fa fa-toggle-on\" onclick=\"startManageModule('" + objModule.name + "', 'hide')\"></i>";
       } else {
-        html += "<i class=\"fa fa-toggle-off\" onclick=\"manageModule('" + objModule.name + "', 'show')\"></i>";
+        html += "<i class=\"fa fa-toggle-off\" onclick=\"startManageModule('" + objModule.name + "', 'show')\"></i>";
       }
       html += "</span>";
       cell_visible.innerHTML = html;
@@ -453,18 +517,18 @@
         if (objModule.version_available != undefined && objModule.version_installed != undefined) {
           if (objModule.version_available > objModule.version_installed) {
             html += "<button class=\"w3-button w3-round-xlarge w3-teal\" ";
-            html += "onclick=\"manageModule('" + objModule.name + "', 'upgrade')\">";
+            html += "onclick=\"startManageModule('" + objModule.name + "', 'upgrade')\">";
             html += "Upgrade";
             html += "</button>";
           }
         }
         html += "<button class=\"w3-button w3-round-xlarge w3-teal\" ";
-        html += "onclick=\"manageModule('" + objModule.name + "', 'uninstall')\">";
+        html += "onclick=\"startManageModule('" + objModule.name + "', 'uninstall')\">";
         html += "Uninstall";
         html += "</button>";
       } else {
         html += "<button class=\"w3-button w3-round-xlarge w3-teal\" ";
-        html += "onclick=\"manageModule('" + objModule.name + "', 'install')\">";
+        html += "onclick=\"startManageModule('" + objModule.name + "', 'install')\">";
         html += "Install";
         html += "</button>";
       }
@@ -477,7 +541,7 @@
     cell_order.style = "display: none;";
   }
 
-  function manageModule(moduleName, action) { /*  */
+  function startManageModule(moduleName, action) { /* Triggered when a module action is clicked */
     var e = event;
     var eventButton = event.target; 
 
@@ -521,11 +585,11 @@
     divBody.appendChild(pDescription);
 
     var hAction = document.createElement("H3");
-    var strHtml = properCapitalization(action);
     hAction.innerHTML = strHtml;
+    var strHtml = properCapitalization(action);
     divBody.appendChild(hAction);
 
-    switch(action) {
+    switch(action) { /* Populate Action Details */
       case "activate":
         var pAction = document.createElement("P");
         var strHtml = "";
@@ -597,6 +661,56 @@
         // code block
     }
 
+    switch(action) { /* Add parameters */
+      case "install":
+      case "upgrade":
+        if (objModule.installer != undefined) {
+          if (objModule.installer.parameters != undefined) {
+
+            var formParam = document.createElement("FORM");
+            formParam.id = "module_form_paramters";
+            formParam.className = "w3-container w3-card-4 w3-light-grey";
+
+            var hParameters = document.createElement("H3");
+            var strHtml = "Parameters";
+            hParameters.innerHTML = strHtml;
+            divBody.appendChild(hParameters);
+
+
+            var objParams = objModule.installer.parameters;
+            for (var i = 0; i < objParams.length; i++) { 
+              var pParam = document.createElement("P");
+
+              var labelParam = document.createElement("LABEL");
+              var strHtml = properCapitalization(objParams[i].name);
+              strHtml += ":";
+              if (objParams[i].required == "true") {
+                strHtml += " <span style='font-style: italic;color: red;'>&nbsp;&nbsp; * required</span>";
+              }
+              labelParam.innerHTML = strHtml;
+              labelParam.style.fontWeight = "bolder";
+              pParam.appendChild(labelParam);
+
+              var inputParam = document.createElement("INPUT");
+              // <input class="w3-input" type="text">
+              inputParam.className = "w3-input";
+              inputParam.type = "text";
+              inputParam.id = "param_" + i;
+              pParam.appendChild(inputParam);
+
+              var descriptionParam = document.createElement("SPAN");
+              descriptionParam.innerHTML = objParams[i].description;
+              descriptionParam.style.fontStyle = "italic";
+              pParam.appendChild(descriptionParam);
+
+
+              formParam.appendChild(pParam);
+            }
+            divBody.appendChild(formParam);
+          }
+        }
+        break;
+    }
 
 
     //--------------------------------------------------------------
@@ -613,8 +727,83 @@
     var btnAction = document.createElement("BUTTON");
     btnAction.className = "w3-button w3-round-xlarge w3-teal";
     btnAction.onclick = function(){
-      setManageModuleButton(moduleName,action,eventButton);
-      document.getElementById("divManageModule").style.display = "none";
+      try {
+        switch(action) {
+          case "activate":
+          case "inactivate":
+            break;
+          case "hide":
+          case "show":
+            setVisibleModule(moduleName, action, eventButton);
+            break;
+          case "upgrade":
+          case "install":
+            var strCommand = "";
+
+            strCommand += objModule.installer.script;
+
+            for (var i = 0; i < objParams.length; i++) { 
+              if (document.getElementById("param_" + i).value.length > 0) {
+                strCommand += " " + objParams[i].flag;
+                strCommand += " " + document.getElementById("param_" + i).value;
+              } else {
+                if (objParams[i].required == "true") {
+                  const err = {name:"Required Parameter Missing", message:"Please enter a value for the '" + objParams[i].name + "' parameter."};
+                  throw err;
+                }
+              }
+            }
+            // Send command to CLI...
+            document.getElementById("divModuleCLI").style.display = "block";
+            document.getElementById("headerModuleCLI").innerHTML = properCapitalization(action) + " Progress...";
+            document.getElementById("bodyModuleCLI").innerText = "";
+
+            var bodyHeight = screen.availHeight / 2;
+            document.getElementById("bodyModuleCLI").style.height = bodyHeight + "px";
+
+
+            console.log("POSTing command=" + strCommand);
+
+            var xhttp = new XMLHttpRequest();
+            var strUrl  = host + "/executeBash.php";
+
+            xhttp.onreadystatechange = function() {
+              console.log("xhttp.onreadystatechange: readyState = " + this.readyState + ", status = " + this.status);
+              if (this.readyState == 4 && this.status == 200) {
+                if (_debug) console.log("getting data back from executeBash.php");
+                var strBash = this.responseText;
+                document.getElementById('bodyModuleCLI').innerText = strBash;
+              }
+            };
+            xhttp.open("POST", strUrl, true);
+            xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhttp.send("command=" + strCommand);   
+
+
+
+
+            var btnModuleCLI = document.getElementById("btnModuleCLI");
+            btnModuleCLI.onclick = function(){
+
+              // After successfully executing script...
+              setManageModuleButton(moduleName,action,eventButton);
+              document.getElementById('divModuleCLI').style.display = 'none';
+              document.getElementById("divManageModule").style.display = "none";
+            }
+
+
+
+            break;
+          case "uninstall":
+            break;
+          default:
+            // code block
+        }
+ 
+      }
+      catch (err) {
+        showErrorMessage(err);
+      }
     };
     btnAction.innerHTML = properCapitalization(action);
     btnAction.style.marginRight = "3ch";
@@ -632,41 +821,39 @@
 
   }
 
-  function getModuleJson(moduleName) { /*  */
+  function getModuleJson(moduleName) { /* returns module from json */
     var tempArr = []; // Assigned below...
     var tempArr = tempArr.concat(json_modules_local);
 
     while (tempArr.length > 0) {
       var objModule = tempArr.shift();
       if (objModule.name != undefined) {
-        if (objModule.name) {
+        if (objModule.name == moduleName) {
             return objModule;
         }
       }
     }
     const err = {name:"Module Name Not Found", message:"getModuleJson() was unable to find '" + moduleName + "'"};
-    throw err
-
+    showErrorMessage(err);
   }
 
-
-  function setManageModuleButton(moduleName,action,eventButton) { /* Sets button state */
+  function setManageModuleButton(moduleName,action,eventButton) { /* Sets button state after action completes */
     switch(action) {
       case "activate":
         eventButton.className = "fa fa-toggle-on";
-        eventButton.onclick = function(){manageModule(moduleName,"inactivate")};
+        eventButton.onclick = function(){startManageModule(moduleName,"inactivate")};
         break;
       case "inactivate":
         eventButton.className = "fa fa-toggle-off";
-        eventButton.onclick = function(){manageModule(moduleName,"activate")};
+        eventButton.onclick = function(){startManageModule(moduleName,"activate")};
         break;
       case "hide":
         eventButton.className = "fa fa-toggle-off";
-        eventButton.onclick = function(){manageModule(moduleName,"show")};
+        eventButton.onclick = function(){startManageModule(moduleName,"show")};
         break;
       case "show":
         eventButton.className = "fa fa-toggle-on";
-        eventButton.onclick = function(){manageModule(moduleName,"hide")};
+        eventButton.onclick = function(){startManageModule(moduleName,"hide")};
         break;
       case "upgrade":
         // code block
@@ -682,12 +869,108 @@
     }
   }
 
+  function setVisibleModule(moduleName,action,eventButton) {
+
+    switch(action) {
+      case "show":
+
+        break;
+      case "hide":
+        break;
+      default:
+        // code block
+    }
+
+  }
+
   function properCapitalization(strText) { /* Returns strText with capitalized first character */
     var strReturn = strText.charAt(0);
     strReturn = strReturn.toUpperCase();
     strReturn += strText.slice(1);
 
     return strReturn;
+  }
+
+  function updateModulesLocalFromMaster() {
+    //var json_modules_master = [];
+    //var json_modules_local = [];
+    var tempArr = []; // Assigned below...
+    var tempArr = tempArr.concat(json_modules_master);
+
+    // Cycle through all master modules to add/update local modules...
+    while (tempArr.length > 0) {
+      var objModule_master = tempArr.shift();
+      if (objModule_master.name != undefined) {
+
+        // Search for an existing match...
+        var foundMatch = false;
+        for (var i = 0; i < json_modules_local.length; i++) {
+
+          // Update existing local record from master...
+          if (objModule_master.name == json_modules_local[i].name) {
+            foundMatch = true;
+            var foundNewData = false;
+
+            if (json_modules_local[i].type != objModule_master.type) {
+              foundNewData = true;
+              json_modules_local[i].type = objModule_master.type
+            }
+            json_modules_local[i].installer = objModule_master.installer;
+            if (json_modules_local[i].version_available != objModule_master.version_available) {
+              foundNewData = true;
+              json_modules_local[i].version_available = objModule_master.version_available;
+            }
+            if (json_modules_local[i].description != objModule_master.description) {
+              foundNewData = true;
+              json_modules_local[i].description = objModule_master.description;
+            }
+
+            if (foundNewData) {
+              json_modules_local[i].master_status = "new";
+            }
+
+            break;
+          }
+        }
+
+        // Add new module from master to local...
+        if (!foundMatch) {
+          // Add local module properties before pushing onto local array...
+          objModule_master.version_installed = "-1";
+          objModule_master.installed = "false";
+          objModule_master.active = "false";
+          objModule_master.visible = "false";
+          objModule_master.master_status = "new";
+          objModule_master.order = -1;
+
+          // Push module onto local array...
+          json_modules_local.push(objModule_master);
+        }
+
+
+
+      }
+    }
+
+    generateModules();
+
+    saveFile("modules_local.json");
+  }
+
+  function showErrorMessage(err){ /*  */
+    document.getElementById("divErrorMessage").style.display = "block";
+
+    var objHeader = document.getElementById("headerErrorMessage");
+    var objBody = document.getElementById("bodyErrorMessage");
+
+    var strHeader = "ERROR: ";
+    strHeader += err.name;
+    objHeader.innerHTML = strHeader;
+
+    var strBody = "<p>";
+    strBody += err.message;
+    strBody += "</p>";
+    objBody.innerHTML = strBody;
   }
 
 </script>
@@ -811,6 +1094,16 @@
       ?>
     </div>
   </div>
+
+
+
+
+  <div class="w3-cell-row">
+    <h4> Modules JSON </h4>
+    <button onclick="updateModulesLocalFromMaster();">Update</button>
+  </div>
+
+
 </div>
 
 
@@ -820,19 +1113,15 @@
 
 
 <div id="Modules_tab" class="w3-cell-row dasherTab" style="display: none;"> <!-- Settings Tab -->
-  <div class="w3-border w3-border-gray w3-margin w3-padding-16">
+  <div id="divModules" class="w3-border w3-border-gray w3-margin w3-padding-16">
     <h2> Modules </h2>
 
     <table id="tblModules" class="w3-table-all">
         <tr>
-          <th style="display: none;"> Order </th>
-          <th> Name </th>
-          <th class="w3-hide-small"> Version </th>
-          <th> Active </th>
-          <th> Visible </th>
-          <th> Manage </th>
+          <td> Loading modules... </td>
         </tr>
     </table>
+
   </div>
 
 
@@ -848,6 +1137,44 @@
       </div>
       <footer id="footerManageModule" class="w3-container w3-blue w3-right-align" style="padding-top: 1ch; padding-bottom: 1ch;">
         <h5>put some close buttons here</h5>
+      </footer>
+    </div>
+  </div>
+
+
+
+  <div id="divErrorMessage" class="w3-modal w3-card-4" style="display: none;">
+    <div class="w3-modal-content">
+      <header class="w3-container w3-red">
+        <h1 id="headerErrorMessage">ERROR!</h1>
+      </header>
+      <div id="bodyErrorMessage" class="w3-container">
+        <p>Something went wrong...</p>
+      </div>
+      <footer id="footerErrorMessage" class="w3-container w3-red w3-right-align" style="padding-top: 1ch; padding-bottom: 1ch;">
+        <h5>
+          <button class="w3-button w3-round-xlarge w3-teal" onclick="document.getElementById('divErrorMessage').style.display = 'none';">
+            Close
+          </button>
+        </h5>
+      </footer>
+    </div>
+  </div>
+
+
+
+  <div id="divModuleCLI" class="w3-modal w3-card-4" style="display: none;">
+    <div class="w3-modal-content">
+      <header class="w3-container w3-orange">
+        <h4 id="headerModuleCLI">Progress...</h4>
+      </header>
+      <div id="bodyModuleCLI" class="w3-container" style="max-height: 50%; overflow: scroll;">
+        <p>Something going on...</p>
+      </div>
+      <footer id="footerModuleCLI" class="w3-container w3-orange w3-right-align" style="padding-top: 1ch; padding-bottom: 1ch;">
+        <button id="btnModuleCLI" class="w3-button w3-round-xlarge w3-teal" onclick="document.getElementById('divModuleCLI').style.display = 'none';">
+          Close
+        </button>
       </footer>
     </div>
   </div>

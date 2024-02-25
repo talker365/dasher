@@ -1,4 +1,7 @@
 <!-- Sidebar/menu -->
+<script type="text/javascript">
+  
+</script>
 <style>
   span.d_navSpan {
     display:    inline-block;
