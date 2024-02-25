@@ -43,26 +43,6 @@ while [[ "$#" -gt 0 ]]; do
   shift
 done
 
-# Check if mandatory options are provided
-missing_options=()
-if [[ -z "$SERIAL_NUMBER" ]]; then
-  missing_options+=("-s |--serial")
-fi
-
-if [[ -z "$CALLSIGN" ]]; then
-  missing_options+=("-c |--callsign")
-fi
-
-if [[ -z "$PASSCODE" ]]; then
-  missing_options+=("-p |--passcode")
-fi
-
-if [[ ${#missing_options[@]} -gt 0 ]]; then
-  echo "Error: Mandatory options ${missing_options[@]} are required."
-  exit 1
-fi
-
-
 # Function to verify callsign format
 verify_callsign() {
     local callsign=$(echo "$CALLSIGN" | tr '[:lower:]' '[:upper:]')  # Convert to uppercase
@@ -91,11 +71,33 @@ uninstall_pypacket() {
   echo "pyPacket and its dependents have been uninstalled."
 }
 
+
 # If uninstall flag is set, execute uninstall function
 if [ "$uninstall" = true ]; then
   uninstall_pypacket
   exit 0
 fi
+
+
+# Check if mandatory options are provided
+missing_options=()
+if [[ -z "$SERIAL_NUMBER" ]]; then
+  missing_options+=("-s |--serial")
+fi
+
+if [[ -z "$CALLSIGN" ]]; then
+  missing_options+=("-c |--callsign")
+fi
+
+if [[ -z "$PASSCODE" ]]; then
+  missing_options+=("-p |--passcode")
+fi
+
+if [[ ${#missing_options[@]} -gt 0 ]]; then
+  echo "Error: Mandatory options ${missing_options[@]} are required."
+  exit 1
+fi
+
 
 # Otherwise, install pyPacket and its dependents
 verify_callsign "$CALLSIGN"
