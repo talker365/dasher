@@ -43,28 +43,60 @@ while [[ "$#" -gt 0 ]]; do
   shift
 done
 
-# Function to check if a command is installed
+
+# Function to check if a command is installed.  Install it if not found.
 check_command() {
   if ! command -v "$1" &> /dev/null; then
-    echo "$1 is not installed or not executable"
-    echo -e "\nDasher Status: Failure"
-    exit 1
+    case "$1" in
+      pip3) sudo apt install -y python3-pip ;;
+      git) sudo apt install -y git ;;
+      figlet) sudo apt install -y figlet ;;
+      multimon-ng) sudo apt install -y multimon-ng ;; 
+    esac
   fi
 }
 
+
+# Function to remove a directory and verify its removal
+remove_and_verify() {
+    local path="$1"
+
+    # Check if path exists
+    if [ -e "$path" ]; then
+        # Remove the path
+        rm -rf "$path"
+
+        # Check if removal was successful
+        if [ $? -eq 0 ]; then
+            echo "'$path' removed successfully."
+        else
+            echo "Failed to remove path '$path'."
+            echo -e "\nDasher Status: Failure"
+            exit 1
+        fi
+    else
+        echo "'$path' does not exist."
+        echo -e "\nDasher Status: Failure"
+    fi
+}
+
+
 # Function to uninstall pyPacket and its dependents
 uninstall_pypacket() {
-  sudo rm -rf "$INSTALL_DIR"/pypacket
-  sudo rm -rf "$INSTALL_DIR"/bin/pypacket
-  sudo rm -rf "$INSTALL_DIR"/share/pypacket
-  sudo rm -rf /etc/systemd/system/pyPacket.service
-  sudo rm -rf /etc/profile.d/02-pypacket.sh
+  remove_and_verify "$INSTALL_DIR"/pypacket
+  remove_and_verify "$INSTALL_DIR"/bin/pypacket
+  remove_and_verify "$INSTALL_DIR"/share/pypacket
+  sudo systemctl stop pyPacket.service
+  sudo systemctl disable pyPacket.service
+  remove_and_verify /etc/systemd/system/pyPacket.service
+  remove_and_verify /etc/profile.d/02-pypacket.sh 
   echo "pyPacket and its dependents have been uninstalled."
 }
 
 # If uninstall flag is set, execute uninstall function
 if [ "$uninstall" = true ]; then
   uninstall_pypacket
+echo -e "\nDasher Status: Success"
   exit 0
 fi
 
