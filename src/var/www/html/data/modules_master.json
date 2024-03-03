@@ -3,7 +3,12 @@
         "name": "ADS-B",
         "type": "ui",
         "installer": {
-            "script":"adsb.sh",
+            "scripts": {
+                "install": "adsb.sh",
+                "uninstall": "adsb.sh -u",
+                "active": "",
+                "inactive": ""
+            },
             "parameters": []
         },
         "version_available": "0.1",
@@ -13,7 +18,12 @@
         "name": "APRS",
         "type": "ui",
         "installer": {
-            "script":"aprs.sh",
+            "scripts": {
+                "install": "aprs.sh",
+                "uninstall": "aprs.sh -u",
+                "active": "",
+                "inactive": ""
+            },
             "parameters": [
                 {
                     "name": "serial",
@@ -42,7 +52,12 @@
         "name": "ATCS",
         "type": "ui",
         "installer": {
-            "script":"atcs.sh",
+            "scripts": {
+                "install": "atcs.sh",
+                "uninstall": "atcs.sh -u",
+                "active": "",
+                "inactive": ""
+            },
             "parameters": []
         },
         "version_available": "0.1",
@@ -52,7 +67,12 @@
         "name": "DreamCatcher",
         "type": "ui",
         "installer": {
-            "script":"dreamcatcher.sh",
+            "scripts": {
+                "install": "dreamcatcher.sh",
+                "uninstall": "dreamcatcher.sh -u",
+                "active": "",
+                "inactive": ""
+            },
             "parameters": []
         },
         "version_available": "0.1",
@@ -62,7 +82,12 @@
         "name": "Echolink",
         "type": "ui",
         "installer": {
-            "script":"echolink.sh",
+            "scripts": {
+                "install": "echolink.sh",
+                "uninstall": "echolink.sh -u",
+                "active": "",
+                "inactive": ""
+            },
             "parameters": []
         },
         "version_available": "0.1",
@@ -72,7 +97,12 @@
         "name": "GOES",
         "type": "ui",
         "installer": {
-            "script":"goes.sh",
+            "scripts": {
+                "install": "goes.sh",
+                "uninstall": "goes.sh -u",
+                "active": "",
+                "inactive": ""
+            },
             "parameters": []
         },
         "version_available": "0.1",
@@ -82,7 +112,12 @@
         "name": "GPS",
         "type": "ui",
         "installer": {
-            "script":"gps.sh",
+            "scripts": {
+                "install": "gps.sh",
+                "uninstall": "gps.sh -u",
+                "active": "",
+                "inactive": ""
+            },
             "parameters": []
         },
         "version_available": "0.1",
@@ -92,7 +127,12 @@
         "name": "NOAA",
         "type": "ui",
         "installer": {
-            "script":"noaa.sh",
+            "scripts": {
+                "install": "noaa.sh",
+                "uninstall": "noaa.sh -u",
+                "active": "",
+                "inactive": ""
+            },
             "parameters": []
         },
         "version_available": "0.1",
@@ -102,7 +142,12 @@
         "name": "Packet",
         "type": "ui",
         "installer": {
-            "script":"packet.sh",
+            "scripts": {
+                "install": "packet.sh",
+                "uninstall": "packet.sh -u",
+                "active": "",
+                "inactive": ""
+            },
             "parameters": []
         },
         "version_available": "0.1",
@@ -112,7 +157,12 @@
         "name": "Sat Tracker",
         "type": "ui",
         "installer": {
-            "script":"sattracker.sh",
+            "scripts": {
+                "install": "sattracker.sh",
+                "uninstall": "sattracker.sh -u",
+                "active": "",
+                "inactive": ""
+            },
             "parameters": []
         },
         "version_available": "0.1",
@@ -122,7 +172,12 @@
         "name": "Weather",
         "type": "ui",
         "installer": {
-            "script":"weather.sh",
+            "scripts": {
+                "install": "weather.sh",
+                "uninstall": "weather.sh -u",
+                "active": "",
+                "inactive": ""
+            },
             "parameters": []
         },
         "version_available": "0.1",
@@ -132,7 +187,12 @@
         "name": "TPMS",
         "type": "ui",
         "installer": {
-            "script":"tpms.sh",
+            "scripts": {
+                "install": "tpms.sh",
+                "uninstall": "tpms.sh -u",
+                "active": "",
+                "inactive": ""
+            },
             "parameters": []
         },
         "version_available": "0.1",
@@ -142,7 +202,12 @@
         "name": "CLI Test",
         "type": "ui",
         "installer": {
-            "script":"ll.sh",
+            "scripts": {
+                "install": "ll.sh",
+                "uninstall": "ll.sh -u",
+                "active": "",
+                "inactive": ""
+            },
             "parameters": []
         },
         "version_available": "0.1",

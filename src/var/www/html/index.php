@@ -549,7 +549,7 @@
     document.getElementById("divManageModule").style.display = "block";
   }
 
-  function populateManageModule(moduleName, action, eventButton) { /*  */
+  function populateManageModule(moduleName, action, eventButton) { /* Populates Manage Module Modal */
     var objModule = getModuleJson(moduleName);
 
     //--------------------------------------------------------------
@@ -729,30 +729,50 @@
     btnAction.onclick = function(){
       try {
         switch(action) {
-          case "activate":
-          case "inactivate":
-            break;
           case "hide":
           case "show":
             setVisibleModule(moduleName, action, eventButton);
             break;
           case "upgrade":
           case "install":
+          case "uninstall":
+          case "activate":
+          case "inactivate":
             var strCommand = "";
 
-            strCommand += objModule.installer.script;
-
-            for (var i = 0; i < objParams.length; i++) { 
-              if (document.getElementById("param_" + i).value.length > 0) {
-                strCommand += " " + objParams[i].flag;
-                strCommand += " " + document.getElementById("param_" + i).value;
-              } else {
-                if (objParams[i].required == "true") {
-                  const err = {name:"Required Parameter Missing", message:"Please enter a value for the '" + objParams[i].name + "' parameter."};
-                  throw err;
-                }
-              }
+            switch (action) {
+              case "upgrade":
+              case "install":
+                strCommand += objModule.installer.scripts.install;
+                break;
+              case "uninstall":
+                strCommand += objModule.installer.scripts.uninstall;
+                break;
+              case "activate":
+                strCommand += objModule.installer.scripts.active;
+                break;
+              case "inactivate":
+                strCommand += objModule.installer.scripts.inactive;
+                break;
             }
+
+            switch(action) {
+              case "upgrade":
+              case "install":
+                for (var i = 0; i < objParams.length; i++) { 
+                  if (document.getElementById("param_" + i).value.length > 0) {
+                    strCommand += " " + objParams[i].flag;
+                    strCommand += " " + document.getElementById("param_" + i).value;
+                  } else {
+                    if (objParams[i].required == "true") {
+                      const err = {name:"Required Parameter Missing", message:"Please enter a value for the '" + objParams[i].name + "' parameter."};
+                      throw err;
+                    }
+                  }
+                }
+                break;
+            }
+
             // Send command to CLI...
             document.getElementById("divModuleCLI").style.display = "block";
             document.getElementById("headerModuleCLI").innerHTML = properCapitalization(action) + " Progress...";
@@ -793,8 +813,6 @@
 
 
 
-            break;
-          case "uninstall":
             break;
           default:
             // code block
@@ -870,17 +888,19 @@
   }
 
   function setVisibleModule(moduleName,action,eventButton) {
-
-    switch(action) {
-      case "show":
-
+    for (var i = 0; i < json_modules_local.length; i++) {
+      if (json_modules_local[i].name == moduleName) {
+        if (action == "show") {
+          json_modules_local[i].visible = "true";
+        } else {
+          json_modules_local[i].visible = "false";
+        }
+        saveFile("modules_local.json");
+        document.getElementById("divManageModule").style.display = "none";
+        setManageModuleButton(moduleName, action, eventButton);
         break;
-      case "hide":
-        break;
-      default:
-        // code block
+      }
     }
-
   }
 
   function properCapitalization(strText) { /* Returns strText with capitalized first character */
