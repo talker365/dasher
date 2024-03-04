@@ -235,4 +235,4 @@
             "scripts": {
                 "install": "weather.sh",
                 "uninstall": "weather.sh -u",
-          
+           
