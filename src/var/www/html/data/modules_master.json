@@ -12,7 +12,13 @@
             "parameters": []
         },
         "version_available": "0.1",
-        "description": "Track aircraft traffic on 1090 MHz and 978 MHz"
+        "description": "Track aircraft traffic on 1090 MHz and 978 MHz",
+        "navbar":{
+            "href":"adsb.php",
+            "id":"navbar_adsb",
+            "icon":"<i class=\"fa fa-plane fa-fw\" style=\"font-size:32px;\"></i>",
+            "name":"ADS-B"
+        }
     },
     {
         "name": "APRS",
@@ -46,7 +52,13 @@
             ]
         },
         "version_available": "0.2",
-        "description": "Track portable and mobile stations on HAM frequencies."
+        "description": "Track portable and mobile stations on HAM frequencies.",
+        "navbar":{
+            "href":"aprs.php",
+            "id":"navbar_aprs",
+            "icon":"<i class=\"fa fa-automobile fa-fw\" style=\"font-size:32px;\"></i>",
+            "name":"APRS"
+        }
     },
     {
         "name": "ATCS",
@@ -61,7 +73,13 @@
             "parameters": []
         },
         "version_available": "0.1",
-        "description": "Track train traffic."
+        "description": "Track train traffic.",
+        "navbar":{
+            "href":"atcs.php",
+            "id":"navbar_atcs",
+            "icon":"<img src=\"images/icons/locomotive-2.jpeg\" alt=\"ATCS\" height=\"32\" width=\"32\">",
+            "name":"ATCS"
+        }
     },
     {
         "name": "DreamCatcher",
@@ -76,7 +94,13 @@
             "parameters": []
         },
         "version_available": "0.1",
-        "description": "Connect to Othernet Dream Catcher receiver."
+        "description": "Connect to Othernet Dream Catcher receiver.",
+        "navbar":{
+            "href":"dreamcatcher.php",
+            "id":"navbar_dreamcatcher",
+            "icon":"<img src=\"images/icons/DreamCatcher.png\" alt=\"DreamCatcher\" height=\"32\" width=\"32\">",
+            "name":"DreamCatcher"
+        }
     },
     {
         "name": "Echolink",
@@ -91,7 +115,13 @@
             "parameters": []
         },
         "version_available": "0.1",
-        "description": "Manage Echolink host device."
+        "description": "Manage Echolink host device.",
+        "navbar":{
+            "href":"echolink.php",
+            "id":"navbar_echolink",
+            "icon":"<img src=\"images/icons/Echolink-2.png\" alt=\"Echolink\" height=\"32\" width=\"32\">",
+            "name":"Echolink"
+        }
     },
     {
         "name": "GOES",
@@ -106,7 +136,13 @@
             "parameters": []
         },
         "version_available": "0.1",
-        "description": "Monitor geostationary NOAA weather satellite."
+        "description": "Monitor geostationary NOAA weather satellite.",
+        "navbar":{
+            "href":"goes.php",
+            "id":"navbar_goes",
+            "icon":"<img src=\"images/icons/Goes.png\" alt=\"GOES\" height=\"32\" width=\"32\">",
+            "name":"GOES"
+        }
     },
     {
         "name": "GPS",
@@ -121,7 +157,13 @@
             "parameters": []
         },
         "version_available": "0.1",
-        "description": "Obtain GPS position and timestamp."
+        "description": "Obtain GPS position and timestamp.",
+        "navbar":{
+            "href":"gps.php",
+            "id":"navbar_gps",
+            "icon":"<img src=\"images/icons/gps.png\" alt=\"GPS\" height=\"32\" width=\"32\">",
+            "name":"GPS"
+        }
     },
     {
         "name": "NOAA",
@@ -136,7 +178,13 @@
             "parameters": []
         },
         "version_available": "0.1",
-        "description": "Monitor NOAA Weather Radio alerts"
+        "description": "Monitor NOAA Weather Radio alerts",
+        "navbar":{
+            "href":"noaa.php",
+            "id":"navbar_noaa",
+            "icon":"<img src=\"images/icons/Weather.png\" alt=\"NOAA\" height=\"32\" width=\"32\">",
+            "name":"NOAA"
+        }
     },
     {
         "name": "Packet",
@@ -151,7 +199,13 @@
             "parameters": []
         },
         "version_available": "0.1",
-        "description": "Transmit and receive AX.25 packets."
+        "description": "Transmit and receive AX.25 packets.",
+        "navbar":{
+            "href":"packet.php",
+            "id":"navbar_packet",
+            "icon":"<img src=\"images/icons/Packet-2.png\" alt=\"Packet\" height=\"32\" width=\"32\">",
+            "name":"Packet"
+        }
     },
     {
         "name": "Sat Tracker",
@@ -166,7 +220,13 @@
             "parameters": []
         },
         "version_available": "0.1",
-        "description": "View current positions and get pass predictions for satellites."
+        "description": "View current positions and get pass predictions for satellites.",
+        "navbar":{
+            "href":"keps.php",
+            "id":"navbar_keps",
+            "icon":"<img src=\"images/icons/Goes.png\" alt=\"keps\" height=\"32\" width=\"32\">",
+            "name":"Sat Tracker"
+        }
     },
     {
         "name": "Weather",
@@ -181,7 +241,13 @@
             "parameters": []
         },
         "version_available": "0.1",
-        "description": "Monitor remote weather senors using the 433 MHZ ISM band."
+        "description": "Monitor remote weather senors using the 433 MHZ ISM band.",
+        "navbar":{
+            "href":"weather.php",
+            "id":"navbar_weather",
+            "icon":"<img src=\"images/icons/Weather.png\" alt=\"Weather\" height=\"32\" width=\"32\">",
+            "name":"Weather"
+        }
     },
     {
         "name": "TPMS",
@@ -196,21 +262,33 @@
             "parameters": []
         },
         "version_available": "0.1",
-        "description": "Monitor tire pressure sensors on 315? MHz."
+        "description": "Monitor tire pressure sensors on 315? MHz.",
+        "navbar":{
+            "href":"TPMS.php",
+            "id":"navbar_tpms",
+            "icon":"<img src=\"images/icons/TPMS.svg\" alt=\"TPMS\" height=\"32\" width=\"32\">",
+            "name":"TPMS"
+        }
     },
     {
         "name": "CLI Test",
         "type": "ui",
         "installer": {
             "scripts": {
-                "install": "ll.sh",
-                "uninstall": "ll.sh -u",
+                "install": "test.sh",
+                "uninstall": "test.sh -u",
                 "active": "",
                 "inactive": ""
             },
             "parameters": []
         },
         "version_available": "0.1",
-        "description": "Test script, does a directory listing..."
+        "description": "test",
+        "navbar":{
+            "href":"test.php",
+            "id":"navbar_test",
+            "icon":"<img src=\"images/icons/TPMS.svg\" alt=\"TPMS\" height=\"32\" width=\"32\">",
+            "name":"test"
+        }
     }
 ]

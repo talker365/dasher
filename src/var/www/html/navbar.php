@@ -15,13 +15,16 @@
       DASHER
   </div>
   <hr style="margin: 0px;">
-  <div class="w3-bar-block" style="font-size:16pt;">
+  <div id="divNavbar" class="w3-bar-block" style="font-size:16pt;">
     <a href="#" class="w3-bar-item w3-button w3-padding-16 dasher-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu"><i class="fa fa-remove fa-fw"></i>  Close Menu</a>
     <a href="index.php" id="navbar_overview" class="w3-bar-item w3-button w3-padding navbar">
       <!--<i class="fa fa-users fa-fw"></i>-->
       <span class="d_navSpan"><img src="images/icons/Overview.png" alt="Overview" height="32" width="32"></span>
       Overview 
     </a>
+
+
+    <!--
     <a href="adsb.php" id="navbar_adsb" class="w3-bar-item w3-button w3-padding navbar">
       <span class="d_navSpan"><i class="fa fa-plane fa-fw" style="font-size:32px;"></i></span>
       ADS-B
@@ -69,9 +72,81 @@
       <span class="d_navSpan"><img src="images/icons/TPMS.svg" alt="TPMS" height="32" width="32"></span>
       TPMS
     </a>
+    -->
   </div>
+
+
   <br /><br /><br /><br />
 </div>
 
 <!-- Overlay effect when opening sidebar on small screens -->
 <div class="w3-overlay dasher-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+
+
+<script type="text/javascript">
+  
+  var _navbar_json_modules_local = [];
+
+  function _navbar_loadFile() { /* loads local json file */
+    var xhttp = new XMLHttpRequest();
+    var strUrl = "loadFile.php?filename=modules_local.json";
+    var strReturn = "";
+
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        //try {
+            _navbar_json_modules_local = JSON.parse(this.responseText);
+            _navbar_populate();
+        //} catch (err) {
+        //  console.log("_navbar_loadFile() - Failed");
+        //  console.log(err);
+        //}
+      }
+    };
+
+    xhttp.open("GET", strUrl, true);
+    xhttp.send();   
+  }
+
+  function _navbar_populate() {
+    var objNavbar = document.getElementById("divNavbar");
+
+    var numModules = _navbar_json_modules_local.length;
+
+
+    for (var i = 0; i < numModules; i++) {
+      var objRemove = document.getElementById(_navbar_json_modules_local[i].navbar.id);
+      if (objRemove != null) objRemove.remove();
+    }
+
+
+    for (var i = 0; i < numModules; i++) {
+      for (var j = 0; j < numModules; j++) {
+        if (_navbar_json_modules_local[j].order == i + 1 && _navbar_json_modules_local[j].visible == "true") {
+          var objA = document.createElement("A");
+          objA.href = _navbar_json_modules_local[j].navbar.href;
+          objA.id = _navbar_json_modules_local[j].navbar.id;
+          objA.className = "w3-bar-item w3-button w3-padding navbar";
+
+          var objS = document.createElement("SPAN");
+          objS.className = "d_navSpan";
+          objS.innerHTML = _navbar_json_modules_local[j].navbar.icon;
+
+          var objN = document.createElement("SPAN");
+          objN.innerHTML = _navbar_json_modules_local[j].navbar.name;
+
+          objA.appendChild(objS);
+          objA.appendChild(objN);
+          objNavbar.appendChild(objA);
+        }
+      }
+    }
+  }
+
+  _navbar_loadFile();
+</script>
+
+
+
+

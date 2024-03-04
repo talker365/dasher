@@ -350,6 +350,8 @@
       if (this.readyState == 4 && this.status == 200) {
         console.log(this.responseText);
         console.log("saveFile(): filename = '" + filename + "' - Successful");
+
+        _navbar_loadFile();
       }
     };
 
@@ -944,6 +946,7 @@
               foundNewData = true;
               json_modules_local[i].description = objModule_master.description;
             }
+            json_modules_local[i].navbar = objModule_master.navbar;
 
             if (foundNewData) {
               json_modules_local[i].master_status = "new";
