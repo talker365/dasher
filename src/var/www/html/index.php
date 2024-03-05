@@ -956,6 +956,13 @@
           }
         }
 
+        var maxOrder = 0;
+        for (var i = 0; i < json_modules_local.length; i++) {
+          if (maxOrder < json_modules_local[i].order) {
+            maxOrder = json_modules_local[i].order;
+          }
+        }
+
         // Add new module from master to local...
         if (!foundMatch) {
           // Add local module properties before pushing onto local array...
@@ -964,7 +971,7 @@
           objModule_master.active = "false";
           objModule_master.visible = "false";
           objModule_master.master_status = "new";
-          objModule_master.order = -1;
+          objModule_master.order = maxOrder + 1;
 
           // Push module onto local array...
           json_modules_local.push(objModule_master);
@@ -996,6 +1003,13 @@
     objBody.innerHTML = strBody;
   }
 
+  function deleteModulesLocal() { /* Empties local modules json array and saves empty file */
+    while (json_modules_local.length > 0) {
+      json_modules_local.shift();
+    }
+    saveFile("modules_local.json");
+  }
+
 </script>
 
 
@@ -1012,7 +1026,7 @@
 
   <div class="w3-bar w3-border-top"> <!-- Tab Navigation -->
     <button id="Dashboard_nav" class="w3-bar-item w3-button tab-button w3-border-bottom w3-border-black w3-light-blue" style="padding-bottom: 0px;" onclick="openDasherTab(event, 'Dashboard_tab', this)"><b><i class="fa fa-dashboard"></i> Dashboard </b></button>
-    <button id="Settings_nav" class="w3-bar-item w3-button tab-button w3-border-bottom w3-border-black" style="padding-bottom: 0px;" onclick="openDasherTab(event, 'Modules_tab', this)"><i class="fa fa-wrench"></i> Modules </button>
+    <button id="Settings_nav" class="w3-bar-item w3-button tab-button w3-border-bottom w3-border-black" style="padding-bottom: 0px;" onclick="openDasherTab(event, 'Modules_tab', this);updateModulesLocalFromMaster();"><i class="fa fa-wrench"></i> Modules </button>
     <button id="Settings_nav" class="w3-bar-item w3-button tab-button w3-border-bottom w3-border-black" style="padding-bottom: 0px;" onclick="openDasherTab(event, 'Settings_tab', this)"><i class="fa fa-wrench"></i> Settings </button>
     <button id="Webmin_nav" class="w3-bar-item w3-button tab-button w3-border-bottom w3-border-black" style="padding-bottom: 0px;" onclick="openDasherTab(event, 'Webmin_tab', this)"><i class="fa fa-gear"></i> Webmin </button>
   </div>
@@ -1123,7 +1137,7 @@
 
   <div class="w3-cell-row">
     <h4> Modules JSON </h4>
-    <button onclick="updateModulesLocalFromMaster();">Update</button>
+    <button onclick="deleteModulesLocal();">Delete Local Module Data</button>
   </div>
 
 
