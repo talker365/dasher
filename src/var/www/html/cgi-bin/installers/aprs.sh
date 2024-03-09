@@ -43,8 +43,7 @@ while [[ "$#" -gt 0 ]]; do
   shift
 done
 
-
-# Function to check if a command is installed.  Install it if not found.
+# Function to check if a command is installed. Install it if not found.
 check_command() {
   if ! command -v "$1" &> /dev/null; then
     case "$1" in
@@ -56,47 +55,64 @@ check_command() {
   fi
 }
 
+# Function to verify a directory on adding or removing.
+verify() {
+    local command="$1"
+    local path_file="$2"
 
-# Function to remove a directory and verify its removal
-remove_and_verify() {
-    local path="$1"
+    case "$command" in
+        "add")
+            # Check if path exists
+            if [ -e "$path_file" ]; then
+                echo "$path_file was successfully added."
+            else
+                echo "$path_file was not created."
+                echo -e "Dasher Status: Failure\n"
+                exit 1
+            fi
+            ;;
+        "del")
+            # Check if path exists
+            if [ -e "$path_file" ]; then
+                # Remove the path
+                rm -rf "$path_file"
 
-    # Check if path exists
-    if [ -e "$path" ]; then
-        # Remove the path
-        rm -rf "$path"
-
-        # Check if removal was successful
-        if [ $? -eq 0 ]; then
-            echo "'$path' removed successfully."
-        else
-            echo "Failed to remove path '$path'."
-            echo -e "\nDasher Status: Failure"
+                # Check if removal was successful
+                if [ $? -eq 0 ]; then
+                    echo "$path_file removed successfully."
+                else
+                    echo "Failed to remove path $path_file"
+                    echo -e "Dasher Status: Failure\n"
+                    exit 1
+                fi
+            else
+                echo "$path_file did not exist."
+            fi
+            ;;
+        *)
+            echo "Invalid command. Please use 'add', 'del'."
             exit 1
-        fi
-    else
-        echo "'$path' does not exist."
-        echo -e "\nDasher Status: Failure"
-    fi
+            ;;
+    esac
 }
-
 
 # Function to uninstall pyPacket and its dependents
 uninstall_pypacket() {
-  remove_and_verify "$INSTALL_DIR"/pypacket
-  remove_and_verify "$INSTALL_DIR"/bin/pypacket
-  remove_and_verify "$INSTALL_DIR"/share/pypacket
+  verify del "$INSTALL_DIR/pypacket"
+  verify del "$INSTALL_DIR/bin/pypacket"
+  verify del "$INSTALL_DIR/share/pypacket"
   sudo systemctl stop pyPacket.service
   sudo systemctl disable pyPacket.service
-  remove_and_verify /etc/systemd/system/pyPacket.service
-  remove_and_verify /etc/profile.d/02-pypacket.sh 
+  verify del "/etc/systemd/system/pyPacket.service"
+  verify del "/etc/profile.d/02-pypacket.sh"
+
   echo "pyPacket and its dependents have been uninstalled."
 }
 
 # If uninstall flag is set, execute uninstall function
 if [ "$uninstall" = true ]; then
   uninstall_pypacket
-echo -e "\nDasher Status: Success"
+  echo -e "\nDasher Status: Success"
   exit 0
 fi
 
@@ -131,10 +147,11 @@ echo "Updating APT Packages"
 sudo apt update
 
 # Clone pyPacket repository
-cd "$INSTALL_DIR" 
+cd "$INSTALL_DIR" || exit
 echo "Cloning pyPacket repository..."
 git clone https://github.com/talker365/pypacket.git
-cd pypacket 
+cd pypacket || exit
+verify add "$INSTALL_DIR/pypacket"
 
 # Edit requirements.txt file and change pytest version
 echo "Editing the requirements.txt file to change pytest version."
@@ -147,7 +164,7 @@ sed -i 's/"serial": "12345678"/"serial": "'"$SERIAL_NUMBER"'"/' config/configura
 
 # Update rtl_listener.py with serial number
 echo "Updating rtl_listener.py file."
-sed -i '12s/.*/config.sample_rate(), "-l", "0", "-d", config.serial(), "-g", config.gain(), "-"],/' implementations/rtl_listener.py
+sed -i '12s/.*/config.sample_rate(), "-l", "0", "-d", config.serial(), "-g", config.gain(), "-"],/' pypacket/implementations/rtl_listener.py
 
 # Create the pyPacket profile file
 echo -e '\nCreating the file /etc/profile.d/02-pypacket.sh...'
@@ -155,6 +172,7 @@ cat << EOF | sudo tee /etc/profile.d/02-pypacket.sh > /dev/null
 export PYPACKET_USERNAME="$CALLSIGN"
 export PYPACKET_PASSWORD="$PASSCODE"
 EOF
+verify add "/etc/profile.d/02-pypacket.sh"
 
 # Create the start script
 echo -e '\nCreating the file /opt/pypacket/start.sh...'
@@ -162,9 +180,10 @@ cat << EOF | sudo tee /opt/pypacket/start.sh > /dev/null
 #!/bin/bash
 export PYPACKET_USERNAME="$CALLSIGN"
 export PYPACKET_PASSWORD="$PASSCODE"
-cd /opt/pypacket/
+cd /opt/pypacket/ || exit
 python3 main.py
 EOF
+verify add "/opt/pypacket/start.sh"
 
 sudo chmod +x /opt/pypacket/start.sh
 sudo chmod +x /opt/pypacket/main.py
@@ -186,6 +205,7 @@ RestartSec=5
 [Install]
 WantedBy=multi-user.target
 EOF
+verify add "/etc/systemd/system/pyPacket.service"
 
 # Enable and start the pyPacket service
 echo "Enabling and starting the pyPacket service..."
