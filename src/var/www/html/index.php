@@ -795,14 +795,38 @@
                 if (_debug) console.log("getting data back from executeBash.php");
                 var strBash = this.responseText;
                 document.getElementById('bodyModuleCLI').innerText = strBash;
+
+                if (strBash.search("Dasher Status: Success") > -1) {
+                  console.log("SUCCESS!!!");
+
+                  for (var i = 0; i < json_modules_local.length; i++) {
+                    if (json_modules_local[i].name == moduleName) {
+                      if (action == "install" || action == "upgrade") {
+                        json_modules_local[i].installed = "true";
+                        json_modules_local[i].active = "true";
+                        json_modules_local[i].visible = "true";
+                        json_modules_local[i].version_installed = json_modules_local[i].version_available;
+                      } else if (action == "uninstall") {
+                        json_modules_local[i].installed = "false";
+                        json_modules_local[i].active = "false";
+                        json_modules_local[i].visible = "false";
+                        json_modules_local[i].version_installed = -1;
+                      }
+
+                      saveFile("modules_local.json");
+                      generateModules();
+                      break;
+                    }
+                  }
+
+                } else if (strBash.search("Dasher Status: Failure") > -1) {
+                  console.log("FAILURE!!!");
+                }
               }
             };
             xhttp.open("POST", strUrl, true);
             xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             xhttp.send("command=" + strCommand);   
-
-
-
 
             var btnModuleCLI = document.getElementById("btnModuleCLI");
             btnModuleCLI.onclick = function(){
@@ -882,7 +906,8 @@
         // code block
         break;
       case "install":
-        // code block
+        eventButton.className = "fa fa-toggle-on";
+        eventButton.onclick = function(){startManageModule(moduleName,"hide")};
         break;
       default:
         // code block

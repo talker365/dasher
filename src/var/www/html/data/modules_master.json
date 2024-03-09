@@ -287,7 +287,7 @@
         "navbar":{
             "href":"test.php",
             "id":"navbar_test",
-            "icon":"<img src=\"images/icons/TPMS.svg\" alt=\"TPMS\" height=\"32\" width=\"32\">",
+            "icon":"<img src=\"images/icons/test.png\" alt=\"TPMS\" height=\"32\" width=\"32\">",
             "name":"test"
         }
     }
