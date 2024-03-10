@@ -50,6 +50,7 @@ check_command() {
       pip3) sudo apt install -y python3-pip ;;
       git) sudo apt install -y git ;;
       figlet) sudo apt install -y figlet ;;
+      "$INSTALL_DIR/bin/rtl_test") ./rtl-sdr.sh || { echo "Failed to run rtl-sdr.sh"; exit 1; } ;;
       multimon-ng) sudo apt install -y multimon-ng ;; 
     esac
   fi
@@ -99,8 +100,6 @@ verify() {
 # Function to uninstall pyPacket and its dependents
 uninstall_pypacket() {
   verify del "$INSTALL_DIR/pypacket"
-#  verify del "$INSTALL_DIR/bin/pypacket"
-#  verify del "$INSTALL_DIR/share/pypacket"
   sudo systemctl stop pyPacket.service
   sudo systemctl disable pyPacket.service
   verify del "/etc/systemd/system/pyPacket.service"
@@ -138,12 +137,14 @@ fi
 
 ########################################[ SCRIPT START ]#####################################
 
-echo "Installing APRS - this process may take several seconds..."
 # Check if required commands are installed
 check_command "pip3"
 check_command "git"
 check_command "figlet"
+check_command "$INSTALL_DIR/bin/rtl_test"
 check_command "multimon-ng"
+
+echo "Installing APRS - this process may take several minutes..."
 
 # Update package list
 echo "Updating APT Packages"

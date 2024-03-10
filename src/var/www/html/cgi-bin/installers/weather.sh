@@ -2,6 +2,7 @@
 
 # Default installation destination
 INSTALL_DIR="/opt"
+SERIAL_NUMBER="00000000"
 
 # Function to display usage information
 usage() {
@@ -40,7 +41,7 @@ check_command() {
       pip3) sudo apt install -y python3-pip ;;
       git) sudo apt install -y git ;;
       figlet) sudo apt install -y figlet ;;
-      "$INSTALL_DIR/bin/rtl_test") ./rtl-sdr.sh || { echo "Failed to run rtl-sdr.sh"; exit 1; } ;;
+	  rtl_433) sudo ./rtl_433.sh ;;
       multimon-ng) sudo apt install -y multimon-ng ;; 
     esac
   fi
@@ -88,23 +89,19 @@ verify() {
 }
 
 # Function to uninstall TPMS and its dependents
-uninstall_TPMS() {
-  echo "Stopping and disabling TPMS service..."
-  systemctl stop tpms
-  systemctl disable tpms
-  verify del "/etc/systemd/system/tpms.service"
-  echo "Removing TPMS log files..."
-  verify del "/var/log/tpms"
-  echo "Removing TPMS installation directory..."
-  verify del "$INSTALL_DIR/tpms"
-  echo "Removing TPMS crontab entry..."
-  (crontab -l | grep -v "$INSTALL_DIR/tpms/trimlog_tpms.sh" ) | crontab -
+uninstall_WEATHER() {
+  echo "Stopping and disabling WX service..."
+  systemctl stop rtl_433-wx.service
+  systemctl disable rtl_433-wx.service
+  verify del "/etc/systemd/system/rtl_433-wx.service"
+  echo "Removing rtl_433-wx log files..."
+  verify del "/var/log/rtl_433"
   echo "Uninstall completed."
 }
 
 # If uninstall flag is set, execute uninstall function
 if [ "$uninstall" = true ]; then
-  uninstall_TPMS
+  uninstall_WEATHER
   echo -e "\nDasher Status: Success"
   exit 0
 fi
@@ -128,73 +125,35 @@ check_command "git"
 check_command "rtl_433"
 check_command "multimon-ng"
 
-echo "Installing TPMS - this process may take several minutes..."
+echo "Installing 433_wx - this process may take several minutes..."
 
 # Update package list
 sudo apt update
 
-# Create the TPMS directory if it doesn't exist
-mkdir -p "$INSTALL_DIR"/tpms
-verify add "$INSTALL_DIR/tpms"
-mkdir -p /var/log/tpms
-verify add /var/log/tpms
+# Creating the rtl_433 service
+echo "Creating the rtl_433 service..."
+cat << EOF | sudo tee "/etc/systemd/system/rtl_433-wx.service" > /dev/null
+[Unit]
+Description=rtl_433 to /var/log/rtl_433/Accurite.json
+After=network.target
 
-# Navigate to the TPMS directory
-cd "$INSTALL_DIR"/tpms || exit 1
+[Service]
+ExecStart=$INSTALL_DIR/bin/rtl_433 -d:$SERIAL_NUMBER -C customary -F "json:/var/log/rtl_433/Accurite.json"
+Restart=always
+RestartSec=5
 
-# Creating the Startup script...
-echo -e '\nCreating the Startup Script  ...'
-cat << EOF > start_tpms.sh
-#!/bin/bash
-cd /opt/tpms/
-rtl_433 -f 314.9M -d:$SERIAL_NUMBER -F json:/var/log/tpms/tpms.json
-EOF
-verify add "$INSTALL_DIR/tpms/start_tpms.sh"
-
-# Creating the Log Trimming script...
-cat << 'EOF' > trimlog_tpms.sh
-#!/bin/bash
-
-# Change directory to /opt/tpms/
-cd /opt/tpms/
-
-# Set the limit for the number of lines
-limit=100
-
-# Check if the log file exists
-if [ -f /var/log/tpms/tpms.json ]; then
-    # Get the number of lines in the log file
-    size=$(wc -l < /var/log/tpms/tpms.json)
-    
-    # Check if the number of lines exceeds the limit
-    if [ "$size" -gt "$limit" ]; then
-        echo "The size of the file is $size lines."
-        echo "The file is larger than the limit of $limit lines, trimming log file."
-        # Trim the log file to the last 100 lines and overwrite the original file
-        tail -n "$limit" /var/log/tpms/tpms.json > /var/log/tpms/tpms2.json && mv /var/log/tpms/tpms2.json /var/log/tpms/tpms.json
-    else
-        echo "The file size is within the limit of $limit lines."
-    fi
-else
-    echo "The log file /var/log/tpms/tpms.json does not exist."
-fi
+[Install]
+WantedBy=multi-user.target
 EOF
 
-# Set executable permission for the script
-chmod +x trimlog_tpms.sh
-verify add "$INSTALL_DIR/tpms/trimlog_tpms.sh"
+verify add "/etc/systemd/system/rtl_433-wx.service"
+mkdir -p /var/log/rtl_433
+touch /var/log/rtl_433/Accurite.json
+verify add "/var/log/rtl_433"
+verify add "/var/log/rtl_433/Accurite.json"
 
-# Make the scripts executable
-chmod +x start_tpms.sh trimlog_tpms.sh
-
-# Add trimming script to crontab
-echo "Adding log trimming script to crontab..."
-line="00 00 * * * $INSTALL_DIR/tpms/trimlog_tpms.sh"
-(crontab -l 2>/dev/null; echo "$line") | crontab -
-
-# Enable and start the service
-echo "Enabling and starting TPMS service..."
-systemctl enable tpms
-systemctl start tpms
+echo "Enabling and starting the rtl_433 service..."
+sudo systemctl enable rtl_433-wx.service
+sudo systemctl start rtl_433-wx.service
 
 echo -e "\nDasher Status: Success"

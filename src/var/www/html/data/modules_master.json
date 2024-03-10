@@ -175,7 +175,14 @@
                 "active": "",
                 "inactive": ""
             },
-            "parameters": []
+            "parameters": [
+                {
+                    "name": "serial",
+                    "flag": "--serial",
+                    "required":"true",
+                    "description": "Serial number for installation"
+                }
+            ]
         },
         "version_available": "0.1",
         "description": "Monitor NOAA Weather Radio alerts",
@@ -238,7 +245,14 @@
                 "active": "",
                 "inactive": ""
             },
-            "parameters": []
+            "parameters": [
+                {
+                    "name": "serial",
+                    "flag": "--serial",
+                    "required":"true",
+                    "description": "Serial number for installation"
+                }
+            ]
         },
         "version_available": "0.1",
         "description": "Monitor remote weather senors using the 433 MHZ ISM band.",
@@ -259,7 +273,14 @@
                 "active": "",
                 "inactive": ""
             },
-            "parameters": []
+            "parameters": [
+                {
+                    "name": "serial",
+                    "flag": "--serial",
+                    "required":"true",
+                    "description": "Serial number for installation"
+                }
+            ]
         },
         "version_available": "0.1",
         "description": "Monitor tire pressure sensors on 315? MHz.",
