@@ -3,7 +3,6 @@
 # Default installation destination
 INSTALL_DIR="/opt"
 SERIAL_NUMBER="00000000"
-
 # Function to display usage information
 usage() {
   echo "Usage: $0 [OPTIONS]"
@@ -95,7 +94,7 @@ uninstall_WEATHER() {
   systemctl disable rtl_433-wx.service
   verify del "/etc/systemd/system/rtl_433-wx.service"
   echo "Removing rtl_433-wx log files..."
-  verify del "/var/log/rtl_433"
+  verify del "/var/log/433"
   echo "Uninstall completed."
 }
 
@@ -134,11 +133,11 @@ sudo apt update
 echo "Creating the rtl_433 service..."
 cat << EOF | sudo tee "/etc/systemd/system/rtl_433-wx.service" > /dev/null
 [Unit]
-Description=rtl_433 to /var/log/rtl_433/Accurite.json
+Description=rtl_433 to /var/log/433/Accurite.json
 After=network.target
 
 [Service]
-ExecStart=$INSTALL_DIR/bin/rtl_433 -d:$SERIAL_NUMBER -C customary -F "json:/var/log/rtl_433/Accurite.json"
+ExecStart=$INSTALL_DIR/bin/rtl_433 -d:$SERIAL_NUMBER -C customary -F "json:/var/log/433/Accurite.json"
 Restart=always
 RestartSec=5
 
@@ -147,10 +146,10 @@ WantedBy=multi-user.target
 EOF
 
 verify add "/etc/systemd/system/rtl_433-wx.service"
-mkdir -p /var/log/rtl_433
-touch /var/log/rtl_433/Accurite.json
-verify add "/var/log/rtl_433"
-verify add "/var/log/rtl_433/Accurite.json"
+mkdir -p /var/log/433
+touch /var/log/433/Accurite.json
+verify add "/var/log/433"
+verify add "/var/log/433/Accurite.json"
 
 echo "Enabling and starting the rtl_433 service..."
 sudo systemctl enable rtl_433-wx.service
