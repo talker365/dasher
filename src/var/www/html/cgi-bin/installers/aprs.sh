@@ -99,8 +99,8 @@ verify() {
 # Function to uninstall pyPacket and its dependents
 uninstall_pypacket() {
   verify del "$INSTALL_DIR/pypacket"
-  verify del "$INSTALL_DIR/bin/pypacket"
-  verify del "$INSTALL_DIR/share/pypacket"
+#  verify del "$INSTALL_DIR/bin/pypacket"
+#  verify del "$INSTALL_DIR/share/pypacket"
   sudo systemctl stop pyPacket.service
   sudo systemctl disable pyPacket.service
   verify del "/etc/systemd/system/pyPacket.service"
@@ -136,6 +136,9 @@ if [[ ${#missing_options[@]} -gt 0 ]]; then
   exit 1
 fi
 
+########################################[ SCRIPT START ]#####################################
+
+echo "Installing APRS - this process may take several seconds..."
 # Check if required commands are installed
 check_command "pip3"
 check_command "git"
