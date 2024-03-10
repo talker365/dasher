@@ -9,7 +9,7 @@
 
     //echo 'bash '.$dir.$command;
 
-    $output = shell_exec('bash '.$dir.$command);
+    $output = shell_exec('sudo bash '.$dir.$command);
     echo $output;
   }
 ?>
