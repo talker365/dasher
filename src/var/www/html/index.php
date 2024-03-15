@@ -788,13 +788,33 @@
 
             var xhttp = new XMLHttpRequest();
             var strUrl  = host + "/executeBash.php";
+            let lastResponseLength = false;
+
+            xhttp.onprogress = function(e) {
+              console.log("xhttp.onprogress: readyState = " + this.readyState + ", status = " + this.status);
+              let progressResponse;
+              let response = e.currentTarget.response;
+
+              progressResponse = lastResponseLength ? 
+                                     response.substring(lastResponseLength)
+                                     : response;
+
+              lastResponseLength = response.length;
+              document.getElementById('bodyModuleCLI').innerText += (progressResponse);
+
+              /*
+              if(Object.prototype.hasOwnProperty.call(parsedResponse, 'success')) {
+                 // handle process success
+              }
+              */
+            }
 
             xhttp.onreadystatechange = function() {
               console.log("xhttp.onreadystatechange: readyState = " + this.readyState + ", status = " + this.status);
               if (this.readyState == 4 && this.status == 200) {
                 if (_debug) console.log("getting data back from executeBash.php");
                 var strBash = this.responseText;
-                document.getElementById('bodyModuleCLI').innerText = strBash;
+                //document.getElementById('bodyModuleCLI').innerText = strBash;
 
                 if (strBash.search("Dasher Status: Success") > -1) {
                   console.log("SUCCESS!!!");
