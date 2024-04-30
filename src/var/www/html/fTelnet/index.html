@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>VDN - K8KHW Packet BBS</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+</head>
+<body>
+    <h1 style="text-align: center">K8KHW Packet BBS</h1>
+
+    <p>This is Ken's (K8KHW) packet BBS in Ohio.  You must have a registered username / password with Ken before logging in.</p>
+
+    <div id="fTelnetContainer"></div>
+    <script src="ftelnet.min.js" id="fTelnetScript"></script>
+    <script>
+        fTelnet.Hostname = "k8khw.dyndns-ip.com";
+        fTelnet.Port = 8100;
+        fTelnet.ProxyHostname = "wd4va.dyndns.org";
+		fTelnet.ProxyPort = 1123;
+    	fTelnet.ConnectionType = "telnet";
+    	fTelnet.Emulation = "ansi-bbs";
+        fTelnet.Init();
+    </script>
+</body>
+</html>

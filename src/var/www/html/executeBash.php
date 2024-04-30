@@ -1,5 +1,4 @@
 <?php
-  //header('X-Accel-Buffering: no');
 
   // define variables and set to empty values
   $command = "";
@@ -11,12 +10,10 @@
 
     //echo 'bash '.$dir.$command;
 
-    /*
     $output = shell_exec('sudo bash '.$dir.$command);
     echo $output;
-    */
-
-    passthru('sudo bash '.$dir.$command);
+ 
+ 
 
   }
 ?>
