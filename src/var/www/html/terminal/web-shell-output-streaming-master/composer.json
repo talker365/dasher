@@ -1,0 +1,17 @@
+{
+    "name": "hpierce/web-commands",
+    "authors": [
+        {
+            "name": "Hayden Pierce",
+            "email": "hayden@haydenpierce.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "HPierce\\": "src/"
+        }
+    },
+    "require": {
+        "symfony/process": "^4.0"
+    }
+}
