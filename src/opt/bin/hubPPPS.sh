@@ -22,7 +22,7 @@ done
 create_udev_rule() {
     udev_rule_file="/etc/udev/rules.d/99-usb-script.rules"
     if [ ! -f "$udev_rule_file" ]; then
-        echo 'SUBSYSTEMS=="usb", ATTRS{idVendor}=="0bda", ATTRS{idProduct}=="2838", ENV{ID_SOFTWARE_RADIO}="1", MODE="0660", GROUP="plugdev", RUN+="/opt/bin/hubPPPS.sh"' | sudo tee "$udev_rule_file" >/dev/null
+        echo 'SUBSYSTEMS=="usb", ATTRS{idVendor}=="0bda", ATTRS{idProduct}=="2838", MODE="0666", RUN+="/opt/bin/hubPPPS.sh"' | sudo tee "$udev_rule_file" >/dev/null
         sudo udevadm control --reload-rules
     fi
 }
