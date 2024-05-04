@@ -1,0 +1,25 @@
+#!/bin/sh -e
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# By default this script does nothing.
+
+# Generate the udev rules for usb detection is non-existent
+test -f /etc/udev/rules.d/99-usb-script.rules || /opt/bin/hubPPPS.sh
+
+# Generate the SSH keys if non-existent
+test -f /etc/ssh/ssh_host_dsa_key || dpkg-reconfigure openssh-server
+
+#PyPacket - APRS iGate  (Might be a Service Installed for pyPacket)
+#    screen -d -m -S PyPacket /root/pypacket/./start.sh
+
+# Setting this to allow multiple SDRs to work better
+/sys/module/usbcore/parameters/usbfs_memory_mb
+exit 0
